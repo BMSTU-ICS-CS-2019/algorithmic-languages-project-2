@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 using std::out_of_range;
+using std::runtime_error;
 
 namespace battleships {
     class GameField : public ConsolePrintable {

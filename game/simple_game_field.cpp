@@ -39,7 +39,7 @@ namespace battleships {
                         ship_cells.emplace_back(CoordinatePair{coordinate, y});
                         continue;
                     }
-                    case DESTROYED: return false; // TODO throw exception
+                    case DESTROYED: throw runtime_error("The ship is touching another one");
                 }
             }
             // go up
@@ -57,7 +57,7 @@ namespace battleships {
                         ship_cells.emplace_back(CoordinatePair{x, coordinate});
                         continue;
                     }
-                    case DESTROYED: return false; // TODO throw exception
+                    case DESTROYED: throw runtime_error("The ship is touching another one");
                 }
             }
             coordinate = x;
@@ -73,7 +73,7 @@ namespace battleships {
                         ship_cells.emplace_back(CoordinatePair{coordinate, y});
                         continue;
                     }
-                    case DESTROYED: return false; // TODO throw exception
+                    case DESTROYED: throw runtime_error("The ship is touching another one");
                 }
             }
             // go down
@@ -89,7 +89,7 @@ namespace battleships {
                         ship_cells.emplace_back(CoordinatePair{x, coordinate});
                         continue;
                     }
-                    case DESTROYED: return false; // TODO throw exception
+                    case DESTROYED: throw runtime_error("The ship is touching another one");
                 }
             }
         }
