@@ -1,6 +1,10 @@
 #include "game/simple_game_field.h"
 
+#include "util/cli_util.h"
+
 int main() {
+    cli::print_logo();
+
     battleships::SimpleGameField field = battleships::SimpleGameField(
             battleships::GameConfiguration{10, 10}
     );
