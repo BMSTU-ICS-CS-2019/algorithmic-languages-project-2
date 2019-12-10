@@ -1,5 +1,4 @@
-#ifndef ALGORITHMIC_LANGUAGES_PROJECT_2_CONSOLE_PRINTABLE_H
-#define ALGORITHMIC_LANGUAGES_PROJECT_2_CONSOLE_PRINTABLE_H
+#pragma once
 
 #include <iostream>
 
@@ -13,6 +12,3 @@ namespace battleships {
         virtual void print_to_console() const noexcept = 0;
     };
 }
-
-
-#endif //ALGORITHMIC_LANGUAGES_PROJECT_2_CONSOLE_PRINTABLE_H

@@ -1,5 +1,4 @@
-#ifndef ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_FIELD_H
-#define ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_FIELD_H
+#pragma once
 
 #include "console_printable.h"
 #include <stdexcept>
@@ -23,6 +22,3 @@ namespace battleships {
         virtual GameField::AttackStatus attack(const size_t &x, const size_t &y) noexcept(false) = 0;
     };
 }
-
-
-#endif //ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_FIELD_H

@@ -1,5 +1,4 @@
-#ifndef ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_CONFIGURATION_H
-#define ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_CONFIGURATION_H
+#pragma once
 
 #include <cstddef>
 
@@ -24,6 +23,3 @@ namespace battleships {
                 field_width(field_width), field_height(field_height) {}
     };
 }
-
-
-#endif //ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_CONFIGURATION_H

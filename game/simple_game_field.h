@@ -1,5 +1,4 @@
-#ifndef ALGORITHMIC_LANGUAGES_PROJECT_2_SIMPLE_GAME_FIELD_H
-#define ALGORITHMIC_LANGUAGES_PROJECT_2_SIMPLE_GAME_FIELD_H
+#pragma once
 
 #include "game_field.h"
 #include "game_configuration.h"
@@ -68,6 +67,3 @@ namespace battleships {
         explicit SimpleGameField(const battleships::GameConfiguration &configuration);
     };
 }
-
-
-#endif //ALGORITHMIC_LANGUAGES_PROJECT_2_SIMPLE_GAME_FIELD_H

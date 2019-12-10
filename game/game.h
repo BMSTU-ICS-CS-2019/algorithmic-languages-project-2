@@ -1,11 +1,7 @@
-#ifndef ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_H
-#define ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_H
+#pragma once
 
 namespace battleships {
     class Game {
 
     };
 }
-
-
-#endif //ALGORITHMIC_LANGUAGES_PROJECT_2_GAME_H
