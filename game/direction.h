@@ -15,7 +15,7 @@ namespace battleships {
             case LEFT: return RIGHT;
             case DOWN: return UP;
             case RIGHT: return LEFT;
-            default: throw invalid_argument(&"Unknown direction " [direction])
+            default: throw invalid_argument(&"Unknown direction " [direction]);
         }
     }
 }
