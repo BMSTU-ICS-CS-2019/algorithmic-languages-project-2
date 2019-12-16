@@ -2,8 +2,10 @@
 
 #include <cstddef>
 
-struct Coordinate {
-    size_t x, y;
-};
+namespace battleships {
+    struct Coordinate {
+        size_t x, y;
+    };
+}
 
 
