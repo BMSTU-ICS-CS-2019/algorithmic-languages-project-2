@@ -99,21 +99,21 @@ namespace battleships {
         return true;
     }
 
-    GameField::AttackStatus SimpleGameField::attack(const size_t &x, const size_t &y) {
+    Game::AttackStatus SimpleGameField::attack(const size_t &x, const size_t &y) {
         check_bounds(x, y);
 
         switch (cells_[x][y]) {
             // handle repeated attacks
-            case VISITED: case ATTACKED: case DESTROYED: return ALREADY_ATTACKED;
+            case VISITED: case ATTACKED: case DESTROYED: return Game::ALREADY_ATTACKED;
             // handle new attacks
             case EMPTY: {
                 cells_[x][y] = VISITED;
-                return MISSED;
+                return Game::MISSED;
             }
             case OCCUPIED: {
                 --ship_cells_alive_;
-                if (attempt_destroy_ship(x, y)) return ship_cells_alive_ == 0 ? DESTROY : WIN;
-                else return HIT;
+                if (attempt_destroy_ship(x, y)) return ship_cells_alive_ == 0 ? Game::DESTROY : Game::WIN;
+                else return Game::HIT;
             }
         }
     }

@@ -3,7 +3,6 @@
 #include "game_field.h"
 #include "game_configuration.h"
 
-
 namespace battleships {
 
     class SimpleGameField : public GameField {
@@ -60,7 +59,7 @@ namespace battleships {
 
         void emplace_ship(const size_t &x, const size_t &y) override;
 
-        GameField::AttackStatus attack(const size_t &x, const size_t &y) override;
+        Game::AttackStatus attack(const size_t &x, const size_t &y) override;
 
         void print_to_console() const noexcept override;
 
