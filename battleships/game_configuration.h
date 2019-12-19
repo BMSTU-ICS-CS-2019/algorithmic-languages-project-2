@@ -12,12 +12,14 @@ namespace battleships {
         /**
          * @brief Width of the field
          */
-        const size_t field_width;
+        size_t field_width;
 
         /**
          * @brief Height of the field
          */
-        const size_t field_height;
+        size_t field_height;
+
+        GameConfiguration() : field_width(0), field_height(0) {}
 
         GameConfiguration(const size_t field_width, const size_t field_height) :
                 field_width(field_width), field_height(field_height) {}
