@@ -22,7 +22,7 @@ namespace common_util {
     }
 
     template<typename T>
-    inline T get_random(set<T>& container, random_device random) {
+    inline T get_random(set<T>& container, random_device &random) {
         if (container.empty()) throw out_of_range("Container is empty");
 
         const auto index = uniform_int_distribution<size_t>(0, container.size() - 1)(random);
