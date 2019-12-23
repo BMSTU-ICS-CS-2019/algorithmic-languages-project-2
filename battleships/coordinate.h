@@ -42,6 +42,15 @@ namespace battleships  {
             }
         }
 
+        void move(const size_t &deltaX, const size_t &deltaY) {
+            this->x += deltaX;
+            this->y += deltaX;
+        }
+
+        [[nodiscard]] Coordinate move(const size_t &deltaX, const size_t &deltaY) const {
+            return Coordinate(x + deltaX, y + deltaY);
+        }
+
         bool operator==(const Coordinate &other) const {
             return x == other.x && y == other.y;
         }
