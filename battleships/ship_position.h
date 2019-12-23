@@ -13,7 +13,7 @@ namespace battleships {
     static bernoulli_distribution ship_position_bool_distribution; // NOLINT(cert-err58-cpp)
 
     enum ShipPosition {
-        VERTICAL, HORIZONTAL
+        NONE, VERTICAL, HORIZONTAL
     };
 
     inline static ShipPosition invert_ship_position(const ShipPosition &ship_position) {
