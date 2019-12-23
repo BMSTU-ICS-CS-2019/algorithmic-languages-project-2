@@ -19,4 +19,5 @@ add_executable(algorithmic_languages_project_2
         battleships/coordinate.h
         battleships/direction.h
         battleships/ship_position.h
-        battleships/container_util.h battleships/simple_game.h)
+        battleships/container_util.h battleships/simple_game.h
+)
