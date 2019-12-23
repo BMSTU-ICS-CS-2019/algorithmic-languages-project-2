@@ -1,10 +1,13 @@
 #include "simple_game_field.h"
 
+#include "container_util.h"
 #include <tuple>
-#include <vector>
+#include <set>
 
+using common_util::contains;
+using common_util::not_contains;
 using std::tuple;
-using std::vector;
+using std::set;
 
 namespace battleships  {
 
@@ -59,15 +62,8 @@ namespace battleships  {
         try_make_visited(down.move(LEFT, 1));
     }
 
-    /**
-     * @brief Attempts to destroy the ship by attacking the given point.
-     * @param x X-coordinate of the point attacked
-     * @param y Y-coordinate of the point attacked
-     * @return {@code true} if the ship was fully destroyed by the attack and {@code false} otherwise
-     */
     bool SimpleGameField::attempt_destroy_ship(const Coordinate &coordinate) {
-
-        vector<Coordinate> ship_cells;
+        set<Coordinate> ship_cells;
         {
             size_t floating_axis = coordinate.x;
             // go left
@@ -81,7 +77,7 @@ namespace battleships  {
                         return false;
                     }
                     case ATTACKED: {
-                        ship_cells.emplace_back(floating_axis, coordinate.y);
+                        ship_cells.emplace(floating_axis, coordinate.y);
                         continue;
                     }
                     case DESTROYED: throw runtime_error("The ship is touching another one");
@@ -99,7 +95,7 @@ namespace battleships  {
                         return false;
                     }
                     case ATTACKED: {
-                        ship_cells.emplace_back(coordinate.x, floating_axis);
+                        ship_cells.emplace(coordinate.x, floating_axis);
                         continue;
                     }
                     case DESTROYED: throw runtime_error("The ship is touching another one");
@@ -115,7 +111,7 @@ namespace battleships  {
                         return false;
                     }
                     case ATTACKED: {
-                        ship_cells.emplace_back(floating_axis, coordinate.y);
+                        ship_cells.emplace(floating_axis, coordinate.y);
                         continue;
                     }
                     case DESTROYED: throw runtime_error("The ship is touching another one");
@@ -131,7 +127,7 @@ namespace battleships  {
                         return false;
                     }
                     case ATTACKED: {
-                        ship_cells.emplace_back(coordinate.x, floating_axis);
+                        ship_cells.emplace(coordinate.x, floating_axis);
                         continue;
                     }
                     case DESTROYED: throw runtime_error("The ship is touching another one");
@@ -231,5 +227,68 @@ namespace battleships  {
             case DESTROYED: return 'X';
             default: throw invalid_argument("Unknown cell state");
         }
+    }
+
+    void SimpleGameField::locate_not_visited_spot(Coordinate &coordinate, Direction direction,
+                                                  const bool &clockwise) {
+        if (is_visited(coordinate)) {
+            size_t step_count = 0;
+
+            bool last_was_without_steps = false;
+            while (true) { // this will finally fail
+                ++step_count;
+                bool made_no_steps = true;
+
+                for (size_t attempt = 0; attempt < 2; attempt++) {
+                    for (size_t i = 0; i < step_count; i++) {
+                        coordinate.move(direction, step_count);
+                        if (is_in_bounds(coordinate)) {
+                            if (!is_visited(coordinate)) return;
+                            made_no_steps = false;
+                        } else coordinate.move(direction, -step_count); // undo
+                    }
+
+                    // make a rotation
+                    direction = clockwise ? next_clockwise(direction) : next_counter_clockwise(direction);
+                }
+
+                // check can be done right now
+                if (made_no_steps) {
+                    if (last_was_without_steps) throw runtime_error("The game has no free spots");
+                    else last_was_without_steps = true;
+                } else last_was_without_steps = false;
+            }
+        }
+    }
+
+    bool SimpleGameField::validate() const {
+        const auto ship_cell_count = configuration_.ship_cell_count();
+        if (ship_cells_alive_ != ship_cell_count) return false;
+
+        set<Coordinate> skipped_coordinates;
+        map<size_t, size_t> ship_counts;
+        for (size_t x = 0; x < configuration_.field_width; ++x) {
+            Coordinate coordinate(x, 0);
+            for (; coordinate.y < configuration_.field_height; ++coordinate.y) if (not_contains(
+                    skipped_coordinates, coordinate)) {
+                if (get_cell_at(coordinate) == CellState::OCCUPIED) {
+                    // check sizes and other data
+                    if (x + 1 < configuration_.field_width) {
+                        // try horizontally
+                        auto otherX = x;
+                        size_t ship_size = 1;
+                    } else if (coordinate.y + 1 < configuration_.field_height) {
+                        // try vertically
+                    }
+                }
+            }
+        }
+
+        return ship_counts != configuration_.ship_counts;
+    }
+
+    void SimpleGameField::reset() noexcept {
+        for (size_t x = 0; x < configuration_.field_width; x++) for (size_t y = 0;
+                y < configuration_.field_width; y++) cells_[x][y] = EMPTY;
     }
 }

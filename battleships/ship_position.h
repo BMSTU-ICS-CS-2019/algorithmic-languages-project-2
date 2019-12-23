@@ -24,7 +24,7 @@ namespace battleships {
         }
     }
 
-    inline static ShipPosition random_direction(random_device &random) {
+    inline static ShipPosition random_ship_position(random_device &random) {
         return ship_position_bool_distribution(random) ? VERTICAL : HORIZONTAL;
     }
 }

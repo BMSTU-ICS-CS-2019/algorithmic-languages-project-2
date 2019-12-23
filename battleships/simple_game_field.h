@@ -45,6 +45,11 @@ namespace battleships  {
 
         size_t ship_cells_alive_ = 0;
 
+        [[nodiscard]] inline bool is_in_bounds(const Coordinate &coordinate) const noexcept {
+            return (0 <= coordinate.x && coordinate.x <= configuration_.field_width)
+                   && (0 <= coordinate.y && coordinate.y <= configuration_.field_height);
+        }
+
         inline void check_bounds(const Coordinate &coordinate) const noexcept(false)  {
             if (coordinate.x >= configuration_.field_width
                     || coordinate.y >= configuration_.field_height) throw out_of_range(
@@ -67,10 +72,10 @@ namespace battleships  {
 
         /**
          * @brief Attempts to destroy the ship by attacking the given point.
-        * @param x X-coordinate of the point attacked
-        * @param y Y-coordinate of the point attacked
-        * @return {@code true} if the ship was fully destroyed by the attack and {@code false} otherwise
-        */
+         * @param x X-coordinate of the point attacked
+         * @param y Y-coordinate of the point attacked
+         * @return {@code true} if the ship was fully destroyed by the attack and {@code false} otherwise
+         */
         inline bool attempt_destroy_ship(const Coordinate &coordinate);
 
     public:
@@ -97,7 +102,7 @@ namespace battleships  {
 
         void emplace_ship(const Coordinate &coordinate) override;
 
-        AttackStatus attack(const Coordinate &y) override;
+        AttackStatus attack(const Coordinate &coordinate) override;
 
         /*
          * Misc
@@ -105,6 +110,12 @@ namespace battleships  {
 
         void print_to_console() const noexcept override;
 
-        char get_icon_at(const Coordinate &coordinate) const override;
+        [[nodiscard]] char get_icon_at(const Coordinate &coordinate) const override;
+
+        [[nodiscard]] bool validate() const override;
+
+        void reset() noexcept override;
+
+        void locate_not_visited_spot(Coordinate &coordinate, Direction direction, const bool &clockwise) override;
     };
 }

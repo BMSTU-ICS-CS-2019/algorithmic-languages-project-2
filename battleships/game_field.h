@@ -26,6 +26,12 @@ namespace battleships {
 
         virtual AttackStatus attack(const Coordinate &coordinate) noexcept(false) = 0;
 
-        virtual char get_icon_at(const Coordinate &coordinate) const = 0;
+        [[nodiscard]] virtual char get_icon_at(const Coordinate &coordinate) const = 0;
+
+        [[nodiscard]] virtual bool validate() const = 0;
+
+        virtual void reset() noexcept = 0;
+
+        virtual void locate_not_visited_spot(Coordinate &start, Direction direction, const bool &clockwise) = 0;
     };
 }

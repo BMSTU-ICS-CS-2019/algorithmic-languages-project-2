@@ -7,23 +7,23 @@ namespace battleships {
     class SimpleGame : public Game {
 
         const GameConfiguration configuration_;
-        SimpleGameField player_field_, bot_field_;
+        SimpleGameField field_1_, field_2_;
 
     public:
 
         explicit SimpleGame(const GameConfiguration &configuration) :
-                configuration_(configuration), player_field_(configuration), bot_field_(configuration) {}
+                configuration_(configuration), field_1_(configuration), field_2_(configuration) {}
 
         GameConfiguration configuration() override {
             return configuration_;
         }
 
-        GameField *player_field() override {
-            return &player_field_;
+        GameField *field_1() override {
+            return &field_1_;
         }
 
-        GameField *bot_field() override {
-            return &bot_field_;
+        GameField *field_2() override {
+            return &field_2_;
         }
 
         void print_to_console() const noexcept override {
@@ -46,9 +46,9 @@ namespace battleships {
                 auto number = 0;
                 for (size_t y = 0; y < height; y++) {
                     cout << number << '|';
-                    for (size_t x = 0; x < width; x++) cout << player_field_.get_icon_at(Coordinate(x, y)) << '|';
+                    for (size_t x = 0; x < width; x++) cout << field_1_.get_icon_at(Coordinate(x, y)) << '|';
                     cout << "   " << number++ << '|';
-                    for (size_t x = 0; x < width; x++) cout << bot_field_.get_icon_at(Coordinate(x, y)) << '|';
+                    for (size_t x = 0; x < width; x++) cout << field_2_.get_icon_at(Coordinate(x, y)) << '|';
                     cout << endl;
                 }
             }

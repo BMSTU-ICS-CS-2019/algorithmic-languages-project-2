@@ -9,8 +9,8 @@ namespace battleships  {
 
         [[nodiscard]] virtual GameConfiguration configuration() = 0;
 
-        [[nodiscard]] virtual GameField *player_field() = 0;
+        [[nodiscard]] virtual GameField *field_1() = 0;
 
-        [[nodiscard]] virtual GameField *bot_field() = 0;
+        [[nodiscard]] virtual GameField *field_2() = 0;
     };
 }
