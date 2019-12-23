@@ -40,7 +40,7 @@ namespace battleships {
                 auto letter = 'A';
                 for (size_t i = 0; i < width * 2 + 1; i++) cout << (i % 2 == 0 ? '|' : letter++);
             }
-            cout << endl;
+            cout << "\r\n";
 
             {
                 auto number = 0;
@@ -49,7 +49,7 @@ namespace battleships {
                     for (size_t x = 0; x < width; x++) cout << field_1_.get_icon_at(Coordinate(x, y)) << '|';
                     cout << "   " << number++ << '|';
                     for (size_t x = 0; x < width; x++) cout << field_2_.get_icon_at(Coordinate(x, y)) << '|';
-                    cout << endl;
+                    cout << "\r\n";
                 }
             }
 
