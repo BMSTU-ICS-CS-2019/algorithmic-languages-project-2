@@ -119,18 +119,22 @@ bool play_against_real_rival() {
                     continue;
                 }
                 case GameField::MISS: {
+                    game.print_to_console();
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " missed" << endl;
                     break;
                 }
                 case GameField::DAMAGE_SHIP: {
+                    game.print_to_console();
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has hit a ship!" << endl;
                     continue;
                 }
                 case GameField::DESTROY_SHIP: {
+                    game.print_to_console();
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has destroyed a ship!" << endl;
                     continue;
                 }
                 case GameField::WIN: {
+                    game.print_to_console();
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has won this game!" << endl;
                     return true;
                 }
@@ -166,18 +170,22 @@ bool play_against_bot_rival() {
                     continue;
                 }
                 case GameField::MISS: {
+                    game.print_to_console();
                     cout << "> You've missed" << endl;
                     break;
                 }
                 case GameField::DAMAGE_SHIP: {
+                    game.print_to_console();
                     cout << "> You've hit a ship!" << endl;
                     continue;
                 }
                 case GameField::DESTROY_SHIP: {
+                    game.print_to_console();
                     cout << "> You've destroyed a ship!" << endl;
                     continue;
                 }
                 case GameField::WIN: {
+                    game.print_to_console();
                     cout << "> You have won this game!" << endl;
                     return true;
                 }
