@@ -1,12 +1,16 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 #include "direction.h"
+
+using std::string;
 
 namespace battleships  {
 
     struct Coordinate {
-        size_t x, y;
+        /* signed type is used to allow negative number comparisons */
+        int x, y;
 
         inline Coordinate(const size_t &x, const size_t &y) : x(x), y(y) {}
 
@@ -55,12 +59,20 @@ namespace battleships  {
             return x == other.x && y == other.y;
         }
 
+        bool operator!=(const Coordinate &other) const {
+            return x != other.x || y != other.y;
+        }
+
         bool operator>(const Coordinate &other) const {
             return x == other.x ? y > other.y : x > other.x;
         }
 
         bool operator<(const Coordinate &other) const {
             return x == other.x ? y < other.y : x < other.x;
+        }
+
+        [[nodiscard]] string to_string() const {
+            return std::to_string(x) + " " + std::to_string(y);
         }
     };
 }

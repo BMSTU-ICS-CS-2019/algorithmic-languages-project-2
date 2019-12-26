@@ -1,6 +1,7 @@
 #include "battleships/simple_game_field.h"
 
 #include <string>
+#include <termcap.h>
 
 #include "util/cli_util.h"
 #include "battleships/coordinate.h"
@@ -15,6 +16,7 @@ using std::pair;
 using std::string;
 
 using battleships::Coordinate;
+using battleships::Direction;
 using battleships::GameConfiguration;
 using battleships::GameField;
 using battleships::SimpleGame;
@@ -23,7 +25,7 @@ using battleships::SimpleRivalBot;
 Coordinate read_coordinate_safely(const size_t &width, const size_t &height) {
     size_t x, y;
     do {
-        cout << "> Enter valid {X,Y} coordinate" << endl;
+        cout << ">>> Enter valid {X,Y} coordinate" << endl;
         char x_char;
         cin >> x_char;
         x = x_char - 'A';
@@ -41,33 +43,50 @@ GameConfiguration default_game_configuration() {
     return configuration;
 }
 
-GameConfiguration read_game_configuration() {
-    GameConfiguration configuration;
-
-    cout << "Enter field width" << endl;
-    cin >> configuration.field_width;
-    cout << "Enter field height" << endl;
-    cin >> configuration.field_height;
-    // todo read other properties
-
-    return configuration;
-}
-
 void read_player_field(GameField * const game_field) {
     while (true) {
         cout << "> Enter valid field configurations" << endl;
         const auto width = game_field->get_configuration().field_width,
                 height = game_field->get_configuration().field_height;
-        for (const auto &ship_count : game_field->get_configuration().ship_counts) {
-            for (size_t ship_id = 1; ship_id <= ship_count.second; ++ship_id) {
-                cout << "==================================="
-                        << ">> Enter the points of " << ship_count.first << "-celled ship #" << ship_id << endl;
+        for (const auto &ship_count_entry : game_field->get_configuration().ship_counts) {
+            for (size_t ship_id = 1; ship_id <= ship_count_entry.second; /* count of such ships */ ++ship_id) {
+                cout << ">> Place " << ship_count_entry.first << "-celled ship ["
+                        << ship_id << '/' << ship_count_entry.second << ']'<< endl;
 
-                for (size_t ship_cell_id = 1; ship_cell_id <= ship_count.first; ship_cell_id++) {
-                    cout << ">>> Enter ship cell #" << ship_cell_id << endl;
-                    game_field->emplace_ship(read_coordinate_safely(width, height));
-                    game_field->print_to_console();
-                }
+                bool placed_successfully;
+                do {
+                    cout << ">>> Enter the location of your ship's head" << endl;
+                    const auto ship_head = read_coordinate_safely(width, height);
+
+                    Direction ship_direction;
+                    if (ship_count_entry.first == 1) ship_direction = battleships::UP; // doesn't matter
+                    else {
+                        cout << ">>> Enter direction of your ship (`(u)p`, `(r)ight`, `(d)own` or `(l)eft`)" << endl;
+                        string direction_string;
+                        while (true) {
+                            cin >> direction_string;
+                            if (direction_string == "u" || direction_string == "up") {
+                                ship_direction = battleships::DOWN; // due to visual inversion
+                                break;
+                            }
+                            else if (direction_string == "r" || direction_string == "right") {
+                                ship_direction = battleships::RIGHT;
+                                break;
+                            }
+                            else if (direction_string == "d" || direction_string == "down") {
+                                ship_direction = battleships::UP; // due to visual inversion
+                                break;
+                            }
+                            else if (direction_string == "l" || direction_string == "left") {
+                                ship_direction = battleships::LEFT;
+                                break;
+                            }
+                        }
+                    }
+                    placed_successfully
+                            = game_field->try_emplace_ship(ship_head, ship_direction, ship_count_entry.first);
+                } while (!placed_successfully);
+                game_field->print_to_console();
             }
         }
 
@@ -99,15 +118,15 @@ bool play_against_real_rival() {
                     cout << "> This point has already been attacked" << endl;
                     continue;
                 }
-                case GameField::MISSED: {
+                case GameField::MISS: {
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " missed" << endl;
                     break;
                 }
-                case GameField::HIT: {
+                case GameField::DAMAGE_SHIP: {
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has hit a ship!" << endl;
                     continue;
                 }
-                case GameField::DESTROY: {
+                case GameField::DESTROY_SHIP: {
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has destroyed a ship!" << endl;
                     continue;
                 }
@@ -129,69 +148,43 @@ bool play_against_bot_rival() {
     // get the configuration object after the game is created in case it gets modified
     const auto configuration = game.configuration();
 
-    SimpleRivalBot rival_bot(&game);
+    SimpleRivalBot rival(&game);
 
-    while (true) {
-        read_player_field(game.field_1());
-        if (game.field_1()->validate()) break;
-        else game.field_1()->reset();
-    }
+    read_player_field(game.field_1());
+    rival.place_ships();
 
     bool player_turn = true;
     while (true) {
         game.print_to_console();
 
-        if (player_turn)
-            while (true) {
-                const auto coordinate = read_coordinate_safely(configuration.field_width, configuration.field_height);
-                const auto attack_status = game.field_2()->attack(coordinate);
-                switch (attack_status) {
-                    case GameField::ALREADY_ATTACKED: {
-                        cout << "> This point has already been attacked" << endl;
-                        continue;
-                    }
-                    case GameField::MISSED: {
-                        cout << "> You've missed" << endl;
-                        break;
-                    }
-                    case GameField::HIT: {
-                        cout << "> You've hit a ship!" << endl;
-                        continue;
-                    }
-                    case GameField::DESTROY: {
-                        cout << "> You've destroyed a ship!" << endl;
-                        continue;
-                    }
-                    case GameField::WIN: {
-                        cout << "> You have won this game!" << endl;
-                        return true;
-                    }
-                    default:
-                        throw invalid_argument("Unknown player-attack status");
-                }
-                break;
-            }
-        else
-            switch (rival_bot.act()) {
-                case GameField::MISSED: {
-                    cout << "> Bot has missed" << endl;
-                    break;
-                }
-                case GameField::HIT: {
-                    cout << "> Bot has hit your ship!" << endl;
+        if (player_turn) while (true) {
+            const auto coordinate = read_coordinate_safely(configuration.field_width, configuration.field_height);
+            const auto attack_status = game.field_2()->attack(coordinate);
+            switch (attack_status) {
+                case GameField::ALREADY_ATTACKED: {
+                    cout << "> This point has already been attacked" << endl;
                     continue;
                 }
-                case GameField::DESTROY: {
-                    cout << "> Bot has destroyed your ship!" << endl;
+                case GameField::MISS: {
+                    cout << "> You've missed" << endl;
+                    break;
+                }
+                case GameField::DAMAGE_SHIP: {
+                    cout << "> You've hit a ship!" << endl;
+                    continue;
+                }
+                case GameField::DESTROY_SHIP: {
+                    cout << "> You've destroyed a ship!" << endl;
                     continue;
                 }
                 case GameField::WIN: {
-                    cout << "> Bot has won this game!" << endl;
-                    return false;
+                    cout << "> You have won this game!" << endl;
+                    return true;
                 }
-                default:
-                    throw invalid_argument("Unknown bot-attack status");
+                default: throw invalid_argument("Unknown player-attack status");
             }
+            break;
+        } else if (rival.act()) return true;
 
         player_turn = !player_turn;
     }
@@ -202,11 +195,18 @@ int main() {
 
     while (true) {
         cout << "Wanna play?" << endl << endl
-                << "Enter `player` to play against the player, `bot` to play against the bot or `exit` to exit" << endl;
+                << "Enter `(p)layer` to play against the player, `(b)ot` to play against the bot"
+                   " or `(e)xit` or `(q)uit`to exit" << endl;
         string input;
         cin >> input;
-        if (input == "player") play_against_real_rival();
-        else if (input == "bot") play_against_bot_rival();
-        else if (input == "exit" || input == "quit") return 0;
+        if (input == "p" || input == "player") {
+            if (play_against_real_rival()) cli::print_win_message();
+            else cli::print_loose_message();
+        }
+        else if (input == "b" || input == "bot") {
+            if (play_against_bot_rival()) cli::print_win_message();
+            else cli::print_loose_message();
+        }
+        else if (input == "e" || input == "q" || input == "exit" || input == "quit") return 0;
     }
 }

@@ -53,7 +53,7 @@ namespace battleships {
         }
     }
 
-    void SimpleGameField::make_destroyed(const Coordinate &coordinate) {
+    void SimpleGameField::surround_ship_cell(const Coordinate &coordinate) {
         try_make_discovered(coordinate.move(RIGHT, 1));
         try_make_discovered(coordinate.move(LEFT, 1));
 
@@ -79,7 +79,7 @@ namespace battleships {
         if (position == NONE) {
             // simply destroy the current point as it is a small ship
             ship_cell->discover();
-            make_destroyed(coordinate);
+            surround_ship_cell(coordinate);
         } else {
             // map of other cells which correspond to this ship
             map<Coordinate, GameFieldCell*> destroyed_cells;
@@ -116,6 +116,8 @@ namespace battleships {
 
             return true;
         }
+
+        return false;
     }
 
     /*
@@ -127,45 +129,55 @@ namespace battleships {
 
         const auto cell = get_cell_at(coordinate);
 
-        if (cell->is_empty()) {
-            if (cell->is_discovered()) return ALREADY_ATTACKED;
-            else {
-                cell->discover();
-                return MISSED;
-            }
-        } else {
-            get_cell_at(coordinate);
-        }
-        switch () {
-            // handle repeated attacks
-            case VISITED:
-            case ATTACKED:
-            case DESTROYED:
-                return ALREADY_ATTACKED;
-                // handle new attacks
-            case EMPTY: {
-                set_cell_at(coordinate, VISITED);;
-                return MISSED;
-            }
-            case OCCUPIED: {
-                --ship_cells_alive_;
-                if (attempt_destroy_ship(coordinate)) return ship_cells_alive_ == 0 ? DESTROY : WIN;
-                else return HIT;
-            }
-        }
+        if (cell->is_discovered()) return ALREADY_ATTACKED;
+        cell->discover();
+
+        if (cell->is_empty()) return MISS;
+
+        attempt_destroy_ship(coordinate);
+        --ship_cells_alive_;
+
+        return ship_cells_alive_ == 0 ? WIN : DESTROY_SHIP;
     }
 
-    bool SimpleGameField::is_visited(const Coordinate &coordinate) {
+    bool SimpleGameField::is_discovered(const Coordinate &coordinate) const {
         check_bounds(coordinate);
 
         return get_cell_at(coordinate)->is_discovered();
     }
 
-    void SimpleGameField::emplace_ship(const Coordinate &coordinate) {
-        check_bounds(coordinate);
 
-        set_cell_at(coordinate, OCCUPIED);;
-        ++ship_cells_alive_;
+    bool SimpleGameField::try_emplace_ship(const Coordinate &coordinate,
+                                           const Direction &direction, const size_t &size) {
+
+        check_bounds(coordinate);
+        // check if the ship firs according to the borders
+
+        if (size == 1) {
+            if (can_place_at(coordinate)) {
+                set_cell_at(coordinate, new ShipGameFieldCell(size, NONE));
+                return true;
+            } else return false;
+        }
+
+        {
+            auto checked_coordinate = coordinate.move(direction, size - 1);
+            cout << "  Coord: " << coordinate.to_string() << endl;
+            cout << "Checked: " << checked_coordinate.to_string() << endl;
+            if (is_out_of_bounds(checked_coordinate)) return false;
+
+            do {
+                if (!can_place_at(coordinate)) return false;
+                checked_coordinate.move(direction, -1);
+            } while (checked_coordinate != coordinate);
+        }
+
+        // to start from
+        for (size_t i = 0; i < size; ++i) set_cell_at(coordinate.move(direction, i), new ShipGameFieldCell(
+                size, is_vertical_direction(direction) ? VERTICAL : HORIZONTAL
+        ));
+
+        return true;
     }
 
     /*
@@ -187,7 +199,7 @@ namespace battleships {
             for (size_t y = 0; y < height; y++) {
                 cout << number++ << '|';
                 for (size_t x = 0; x < width; x++) {
-                    cout << cell_state_as_string(cells_[x][y]) << '|';
+                    cout << cells_[x][y]->private_icon() << '|';
                 }
                 cout << "\r\n";
             }
@@ -199,28 +211,15 @@ namespace battleships {
         cout << endl;
     }
 
-    char SimpleGameField::get_icon_at(const Coordinate &coordinate) const {
+    char SimpleGameField::get_public_icon_at(const Coordinate &coordinate) const {
         check_bounds(coordinate);
 
-        switch (get_cell_at(coordinate)) {
-
-            case EMPTY:
-            case OCCUPIED:
-                return '~'; // unknown
-            case VISITED:
-                return '-';
-            case ATTACKED:
-                return '+';
-            case DESTROYED:
-                return 'X';
-            default:
-                throw invalid_argument("Unknown cell state");
-        }
+        return get_cell_at(coordinate)->public_icon();
     }
 
     void SimpleGameField::locate_not_visited_spot(Coordinate &coordinate, Direction direction,
-                                                  const bool &clockwise) {
-        if (is_visited(coordinate)) {
+                                                  const bool &clockwise) const {
+        if (is_discovered(coordinate)) {
             size_t step_count = 0;
 
             bool last_was_without_steps = false;
@@ -232,13 +231,14 @@ namespace battleships {
                     for (size_t i = 0; i < step_count; i++) {
                         coordinate.move(direction, step_count);
                         if (is_in_bounds(coordinate)) {
-                            if (!is_visited(coordinate)) return;
+                            if (!is_discovered(coordinate)) return;
                             made_no_steps = false;
                         } else coordinate.move(direction, -step_count); // undo
                     }
 
                     // make a rotation
-                    direction = clockwise ? next_clockwise(direction) : next_counter_clockwise(direction);
+                    direction = clockwise ? rotate_direction_clockwise(direction) : rotate_direction_counter_clockwise(
+                            direction);
                 }
 
                 // check can be done right now
@@ -251,6 +251,9 @@ namespace battleships {
     }
 
     bool SimpleGameField::validate() const {
+        return true;
+
+        /*
         const auto ship_cell_count = configuration_.ship_cell_count();
         if (ship_cells_alive_ != ship_cell_count) return false;
 
@@ -275,12 +278,40 @@ namespace battleships {
         }
 
         return ship_counts != configuration_.ship_counts;
+         */
     }
 
     void SimpleGameField::reset() noexcept {
-        for (size_t x = 0; x < configuration_.field_width; x++)
-            for (size_t y = 0;
-                 y < configuration_.field_width; y++)
-                cells_[x][y] = EMPTY;
+        for (size_t x = 0; x < configuration_.field_width; x++) for (size_t y = 0;
+                y < configuration_.field_width; y++) set_cell_at(
+                        Coordinate(x, y), new EmptyGameFieldCell
+        );
+    }
+
+    bool SimpleGameField::can_place_near(const Coordinate &coordinate) const {
+        return is_out_of_bounds(coordinate) || get_cell_at(coordinate)->is_empty();
+    }
+
+    bool SimpleGameField::can_place_at(const Coordinate &coordinate) const {
+        check_bounds(coordinate);
+        cout << "Checking for " << coordinate.to_string() << endl;
+
+        if (!get_cell_at(coordinate)->is_empty()) return false;
+
+        // check each side
+        for (const auto &tested_direction : ALL_DIRECTIONS) {
+            auto tested_coordinate = coordinate;
+
+            tested_coordinate.move(tested_direction, 1);
+            cout << "1) " << tested_coordinate.to_string() << endl;
+            if (!can_place_near(tested_coordinate)) return false;
+
+            tested_coordinate.move(rotate_direction_clockwise(tested_direction), 1);
+            cout << "2) " << tested_coordinate.to_string() << endl;
+            if (!can_place_near(tested_coordinate)) return false;
+        }
+
+        return true;
+
     }
 }

@@ -10,7 +10,9 @@ namespace battleships  {
     class RivalBot {
 
     public:
-        virtual GameField::AttackStatus act() = 0;
+        virtual void place_ships() = 0;
+
+        virtual bool act() = 0;
     };
 }
 

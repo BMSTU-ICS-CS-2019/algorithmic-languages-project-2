@@ -28,8 +28,15 @@ namespace battleships {
 
         // Initialized members
 
+        optional<Coordinate> attacked_ship_coordinate_;
+
+        enum {
+            UNKNOWN, VERTICAL, HORIZONTAL
+        } ship_direction_ = UNKNOWN;
+        /*
         optional<Coordinate> initial_ship_coordinate_;
         set<Coordinate> possible_ship_coordinates_;
+         */
         /*
         optional<Coordinate> ship_start_;
         optional<ShipPosition> ship_position_;
@@ -50,29 +57,35 @@ namespace battleships {
             return Coordinate(x_random_distribution_(random_), y_random_distribution_(random_));
         }
 
-        inline void locate_not_visited_spot(/* mut */ Coordinate &coordinate) {
-            game_->field_1()->locate_not_visited_spot(
+        inline void locate_not_visited_spot(/* mut */ Coordinate &coordinate, const GameField *const game_field) {
+            game_field->locate_not_visited_spot(
                     coordinate,
                     random_direction(random_),
                     free_spot_lookup_side_random_distribution_(random_)
             );
         }
 
-        GameField::AttackStatus continue_attack();
+        void place_ship_randomly(const size_t &ship_size);
 
-        GameField::AttackStatus random_attack();
+        bool continue_attack();
+
+        bool random_attack();
 
         void handle_ship_destruction();
 
+        Direction random_available_attack_direction(const Coordinate &coordinate);
+
     public:
 
-        explicit SimpleRivalBot(SimpleGame * const game)
+        explicit SimpleRivalBot(SimpleGame *const game)
                 : game_(game),
                   x_random_distribution_(0, game->configuration().field_width - 1),
                   y_random_distribution_(0, game->configuration().field_height - 1),
                   direction_random_distribution_(0, 3) {}
 
-        GameField::AttackStatus act() override;
+        void place_ships() override;
+
+        bool act() override;
     };
 }
 

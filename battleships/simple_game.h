@@ -46,9 +46,11 @@ namespace battleships {
                 auto number = 0;
                 for (size_t y = 0; y < height; y++) {
                     cout << number << '|';
-                    for (size_t x = 0; x < width; x++) cout << field_1_.get_icon_at(Coordinate(x, y)) << '|';
+                    for (size_t x = 0; x < width; x++) cout
+                            << field_1_.get_public_icon_at(Coordinate(x, y)) << '|';
                     cout << "   " << number++ << '|';
-                    for (size_t x = 0; x < width; x++) cout << field_2_.get_icon_at(Coordinate(x, y)) << '|';
+                    for (size_t x = 0; x < width; x++) cout
+                            << field_2_.get_public_icon_at(Coordinate(x, y)) << '|';
                     cout << "\r\n";
                 }
             }

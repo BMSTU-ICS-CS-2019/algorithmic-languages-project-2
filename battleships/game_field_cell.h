@@ -15,18 +15,22 @@ namespace battleships {
     class GameFieldCell {
 
     public:
-        virtual ~GameFieldCell() = default;
+        virtual ~GameFieldCell() noexcept = default;
 
         /**
-         * @brief Checks if thi cell has been discovered.
+         * @brief Checks if this cell has been discovered.
          *
          * @return {@code true} if this cell has been discovered and {@code false} otherwise
          */
-        [[nodiscard]] virtual bool is_discovered() const = 0;
+        [[nodiscard]] virtual bool is_discovered() const noexcept = 0;
 
-        [[nodiscard]] virtual bool is_empty() const = 0;
+        [[nodiscard]] virtual bool is_empty() const noexcept = 0;
 
         virtual void discover() = 0;
+
+        [[nodiscard]] virtual char public_icon() const noexcept = 0;
+
+        [[nodiscard]] virtual char private_icon() const noexcept = 0;
     };
 
     class AbstractGameFieldCell : public GameFieldCell {
@@ -35,20 +39,29 @@ namespace battleships {
         bool discovered_ = false;
     public:
 
-        [[nodiscard]] bool is_discovered() const override {
+        [[nodiscard]] bool is_discovered() const noexcept override {
             return discovered_;
         }
 
         void discover() override {
+            if (discovered_) throw runtime_error("This cell is already discovered");
             discovered_ = true;
+        }
+
+        [[nodiscard]] char public_icon() const noexcept override {
+            return discovered_ ? private_icon() : '.';
         }
     };
 
     class EmptyGameFieldCell final : public AbstractGameFieldCell {
 
     public:
-        [[nodiscard]] bool is_empty() const override {
+        [[nodiscard]] bool is_empty() const noexcept override {
             return true;
+        }
+
+        [[nodiscard]] char private_icon() const noexcept override {
+            return '~';
         }
     };
 
@@ -62,7 +75,7 @@ namespace battleships {
         explicit ShipGameFieldCell(const size_t &ship_size, const ShipPosition &position) :
                 ship_size_(ship_size), position_(position) {}
 
-        [[nodiscard]] bool is_empty() const override {
+        [[nodiscard]] bool is_empty() const noexcept override {
             return false;
         }
 
@@ -72,6 +85,10 @@ namespace battleships {
 
         [[nodiscard]] ShipPosition get_position() const {
             return position_;
+        }
+
+        [[nodiscard]] char private_icon() const noexcept override {
+            return '#';
         }
     };
 }
