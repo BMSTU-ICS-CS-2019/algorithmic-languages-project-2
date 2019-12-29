@@ -30,7 +30,7 @@ namespace battleships  {
     }
 
     void SimpleRivalBot::place_ships() {
-        const auto ship_counts = game_->configuration().ship_counts;
+        const auto ship_counts = game_->configuration().ships;
         for (auto iterator = ship_counts.rbegin(); iterator != ship_counts.rend(); ++iterator) {
             const auto entry = *iterator;
             for (size_t i = 0; i < entry.second; ++i) place_ship_randomly(entry.first);

@@ -30,7 +30,7 @@ namespace battleships {
         /**
          * @brief Counts of ships by their length
          */
-        map<size_t, size_t> ship_counts;
+        map<size_t, size_t> ships;
 
         GameConfiguration() : field_width(0), field_height(0), max_ship_length(0) {}
 
@@ -40,9 +40,16 @@ namespace battleships {
         [[nodiscard]] size_t ship_cell_count() const {
             size_t ship_cell_count = 0;
 
-            for (const auto &ship_count : ship_counts) ship_cell_count += ship_count.first * ship_count.second;
+            for (const auto &ship_count : ships) ship_cell_count += ship_count.first * ship_count.second;
 
             return ship_cell_count;
+        }
+
+        bool are_ships_valid() {
+            size_t max_ship_coverage = 0;
+            for (const auto entry : ships) max_ship_coverage += entry.second * (6 + entry.first * 2);
+
+            return max_ship_coverage <= field_width * field_height;
         }
     };
 }

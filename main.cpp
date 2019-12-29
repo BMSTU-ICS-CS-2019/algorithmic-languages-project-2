@@ -38,7 +38,7 @@ Coordinate read_coordinate_safely(const size_t &width, const size_t &height) {
 GameConfiguration default_game_configuration() {
     GameConfiguration configuration(10, 10, 4);
 
-    for (size_t i = 1; i <= 4; i++) configuration.ship_counts.insert(pair(i, 4 - i + 1));
+    for (size_t i = 1; i <= 4; i++) configuration.ships.insert(pair(i, 4 - i + 1));
 
     return configuration;
 }
@@ -48,7 +48,7 @@ void read_player_field(GameField * const game_field) {
         cout << "> Enter valid field configurations" << endl;
         const auto width = game_field->get_configuration().field_width,
                 height = game_field->get_configuration().field_height;
-        for (const auto &ship_count_entry : game_field->get_configuration().ship_counts) {
+        for (const auto &ship_count_entry : game_field->get_configuration().ships) {
             for (size_t ship_id = 1; ship_id <= ship_count_entry.second; /* count of such ships */ ++ship_id) {
                 cout << ">> Place " << ship_count_entry.first << "-celled ship ["
                         << ship_id << '/' << ship_count_entry.second << ']'<< endl;

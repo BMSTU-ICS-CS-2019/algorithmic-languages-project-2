@@ -258,7 +258,7 @@ namespace battleships {
         if (ship_cells_alive_ != ship_cell_count) return false;
 
         set<Coordinate> skipped_coordinates;
-        map<size_t, size_t> ship_counts;
+        map<size_t, size_t> ships;
         for (size_t x = 0; x < configuration_.field_width; ++x) {
             Coordinate coordinate(x, 0);
             for (; coordinate.y < configuration_.field_height; ++coordinate.y)
@@ -277,7 +277,7 @@ namespace battleships {
                 }
         }
 
-        return ship_counts != configuration_.ship_counts;
+        return ships != configuration_.ships;
          */
     }
 
