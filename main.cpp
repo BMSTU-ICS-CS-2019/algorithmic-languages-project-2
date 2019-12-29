@@ -134,8 +134,7 @@ bool play_against_real_rival() {
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has won this game!" << endl;
                     return first_player_turn;
                 }
-                default:
-                    throw invalid_argument("Unknown player-attack status");
+                default: throw invalid_argument("Unknown player-attack status");
             }
             break;
         }
