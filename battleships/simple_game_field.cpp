@@ -70,7 +70,7 @@ namespace battleships {
     bool SimpleGameField::attempt_destroy_ship(const Coordinate &coordinate) {
         const auto cell = get_cell_at(coordinate);
 
-        if (!cell->is_empty()) throw runtime_error("Attempt to destroy a cell not being a ship");
+        if (cell->is_empty()) throw runtime_error("Attempt to destroy a cell not being a ship");
 
         const auto ship_cell = (ShipGameFieldCell*) cell;
 
@@ -136,6 +136,7 @@ namespace battleships {
         attempt_destroy_ship(coordinate);
         --ship_cells_alive_;
 
+        cout << ship_cells_alive_ << endl;
         return ship_cells_alive_ == 0 ? WIN : DESTROY_SHIP;
     }
 
@@ -156,6 +157,8 @@ namespace battleships {
 
         if (size == 1) {
             set_cell_at(base_coordinate, new ShipGameFieldCell(size, NONE));
+            ++ship_cells_alive_;
+
             return true;
         }
 
@@ -173,6 +176,7 @@ namespace battleships {
         for (size_t i = 0; i < size; ++i) set_cell_at(base_coordinate.move(direction, i), new ShipGameFieldCell(
                 size, is_vertical_direction(direction) ? VERTICAL : HORIZONTAL
         ));
+        ship_cells_alive_ += size;
 
         return true;
     }
