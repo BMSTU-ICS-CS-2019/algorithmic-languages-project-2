@@ -110,7 +110,7 @@ namespace battleships {
             // destroy each other cells of this ship
             for (const auto &destroyed_cell : destroyed_cells) {
                 destroyed_cell.second->discover();
-                try_make_discovered(destroyed_cell.first);
+                surround_ship_cell(destroyed_cell.first);
             }
 
             return true;
