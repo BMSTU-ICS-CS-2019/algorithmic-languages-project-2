@@ -1,6 +1,12 @@
 #include "cli_util.h"
 
 namespace cli {
+
+    void clear() {
+        for (size_t i = 0; i < 32; ++i) cout << "\r\n";
+        cout << endl;
+    }
+
     void print_logo() {
         cout << "  ____        _   _   _           _     _           \r\n"
                 " |  _ \\      | | | | | |         | |   (_)          \r\n"

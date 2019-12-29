@@ -7,6 +7,8 @@ using std::endl;
 
 namespace cli {
 
+    void clear();
+
     void print_logo();
 
     void print_win_message();
