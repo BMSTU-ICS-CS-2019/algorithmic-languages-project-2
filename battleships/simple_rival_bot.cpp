@@ -47,7 +47,7 @@ namespace battleships  {
         const auto field = game_->field_1();
 
         //  attempt an attack to reveal the direction
-        if (ship_direction_ == UNKNOWN) {
+        if (ship_direction_ == NONE) {
             const auto attack_direction
                     = random_available_attack_direction(attacked_ship_coordinate_.value());
             switch (field->attack(initial_coordinate.move(attack_direction, 1))) {
@@ -126,7 +126,7 @@ namespace battleships  {
 
     void SimpleRivalBot::handle_ship_destruction() {
         attacked_ship_coordinate_.reset();
-        ship_direction_ = UNKNOWN;
+        ship_direction_ = NONE;
     }
 
     Direction SimpleRivalBot::random_available_attack_direction(const Coordinate &coordinate) {

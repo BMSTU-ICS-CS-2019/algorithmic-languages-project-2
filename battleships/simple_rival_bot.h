@@ -30,9 +30,7 @@ namespace battleships {
 
         optional<Coordinate> attacked_ship_coordinate_;
 
-        enum {
-            UNKNOWN, VERTICAL, HORIZONTAL
-        } ship_direction_ = UNKNOWN;
+        ShipPosition ship_direction_ = NONE;
         /*
         optional<Coordinate> initial_ship_coordinate_;
         set<Coordinate> possible_ship_coordinates_;
