@@ -7,6 +7,8 @@ namespace battleships  {
 
     public:
 
+        virtual ~Game() = default;
+
         [[nodiscard]] virtual GameConfiguration configuration() = 0;
 
         [[nodiscard]] virtual GameField *field_1() = 0;
