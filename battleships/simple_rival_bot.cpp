@@ -112,7 +112,7 @@ namespace battleships  {
             const auto attack_result = rival_field_->attack(attacked_coordinate);
             switch (attack_result) {
                 case GameField::ALREADY_ATTACKED: throw runtime_error("Cell was expected to not be visited");
-                case GameField::MISS: return GameField::MISS; // just missed
+                case GameField::MISS: return false; // just missed
                 case GameField::DAMAGE_SHIP: {
                     // Multi-celled ship
                     attacked_ship_coordinate_ = attacked_coordinate;
