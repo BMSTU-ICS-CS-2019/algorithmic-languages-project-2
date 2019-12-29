@@ -189,7 +189,7 @@ bool play_against_bot_rival() {
                 default: throw invalid_argument("Unknown player-attack status");
             }
             break;
-        } else if (rival.act()) return true;
+        } else if (rival.act()) return false;
 
         player_turn = !player_turn;
     }
