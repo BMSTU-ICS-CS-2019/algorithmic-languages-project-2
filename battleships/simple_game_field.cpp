@@ -193,7 +193,7 @@ namespace battleships {
             auto letter = 'A';
             for (size_t i = 0; i < width * 2 + 1; i++) cout << (i % 2 == 0 ? '|' : letter++);
         }
-        cout << "\r\n";
+        cout << "\n";
 
         {
             auto number = 0;
@@ -202,7 +202,7 @@ namespace battleships {
                 for (size_t x = 0; x < width; x++) {
                     cout << cells_[x][y]->private_icon() << '|';
                 }
-                cout << "\r\n";
+                cout << "\n";
             }
         }
 
