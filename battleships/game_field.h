@@ -30,8 +30,6 @@ namespace battleships {
 
         [[nodiscard]] virtual char get_public_icon_at(const Coordinate &coordinate) const = 0;
 
-        [[nodiscard]] virtual bool validate() const = 0;
-
         [[nodiscard]] virtual bool is_in_bounds(const Coordinate &coordinate) const noexcept = 0;
 
         [[nodiscard]] virtual bool is_out_of_bounds(const Coordinate &coordinate) const noexcept = 0;

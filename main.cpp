@@ -44,51 +44,44 @@ GameConfiguration default_game_configuration() {
 }
 
 void read_player_field(GameField *const game_field) {
-    while (true) {
-        cout << "> Enter valid field configurations" << endl;
-        const auto width = game_field->get_configuration().field_width,
-                height = game_field->get_configuration().field_height;
-        for (const auto &ship_count_entry : game_field->get_configuration().ships) {
-            for (size_t ship_id = 1; ship_id <= ship_count_entry.second; /* count of such ships */ ++ship_id) {
-                cout << ">> Place " << ship_count_entry.first << "-celled ship ["
-                     << ship_id << '/' << ship_count_entry.second << ']' << endl;
-
-                bool placed_successfully;
-                do {
-                    cout << ">>> Enter the location of your ship's head" << endl;
-                    const auto ship_head = read_coordinate_safely(width, height);
-
-                    Direction ship_direction;
-                    if (ship_count_entry.first == 1) ship_direction = battleships::UP; // doesn't matter
-                    else {
-                        cout << ">>> Enter direction of your ship (`(u)p`, `(r)ight`, `(d)own` or `(l)eft`)" << endl;
-                        string direction_string;
-                        while (true) {
-                            cin >> direction_string;
-                            if (direction_string == "u" || direction_string == "up") {
-                                ship_direction = battleships::DOWN; // due to visual inversion
-                                break;
-                            } else if (direction_string == "r" || direction_string == "right") {
-                                ship_direction = battleships::RIGHT;
-                                break;
-                            } else if (direction_string == "d" || direction_string == "down") {
-                                ship_direction = battleships::UP; // due to visual inversion
-                                break;
-                            } else if (direction_string == "l" || direction_string == "left") {
-                                ship_direction = battleships::LEFT;
-                                break;
-                            }
+    cout << "> Enter valid field configurations" << endl;
+    const auto width = game_field->get_configuration().field_width,
+            height = game_field->get_configuration().field_height;
+    for (const auto &ship_count_entry : game_field->get_configuration().ships) {
+        for (size_t ship_id = 1; ship_id <= ship_count_entry.second; /* count of such ships */ ++ship_id) {
+            cout << ">> Place " << ship_count_entry.first << "-celled ship ["
+                 << ship_id << '/' << ship_count_entry.second << ']' << endl;
+            bool placed_successfully;
+            do {
+                cout << ">>> Enter the location of your ship's head" << endl;
+                const auto ship_head = read_coordinate_safely(width, height);
+                Direction ship_direction;
+                if (ship_count_entry.first == 1) ship_direction = battleships::UP; // doesn't matter
+                else {
+                    cout << ">>> Enter direction of your ship (`(u)p`, `(r)ight`, `(d)own` or `(l)eft`)" << endl;
+                    string direction_string;
+                    while (true) {
+                        cin >> direction_string;
+                        if (direction_string == "u" || direction_string == "up") {
+                            ship_direction = battleships::DOWN; // due to visual inversion
+                            break;
+                        } else if (direction_string == "r" || direction_string == "right") {
+                            ship_direction = battleships::RIGHT;
+                            break;
+                        } else if (direction_string == "d" || direction_string == "down") {
+                            ship_direction = battleships::UP; // due to visual inversion
+                            break;
+                        } else if (direction_string == "l" || direction_string == "left") {
+                            ship_direction = battleships::LEFT;
+                            break;
                         }
                     }
-                    placed_successfully
-                            = game_field->try_emplace_ship(ship_head, ship_direction, ship_count_entry.first);
-                } while (!placed_successfully);
-                game_field->print_to_console();
-            }
+                }
+                placed_successfully
+                        = game_field->try_emplace_ship(ship_head, ship_direction, ship_count_entry.first);
+            } while (!placed_successfully);
+            game_field->print_to_console();
         }
-
-        if (game_field->validate()) break;
-        else cout << "Something's wrong with your field, try fixing it..." << endl;
     }
 }
 

@@ -87,8 +87,6 @@ namespace battleships {
 
         [[nodiscard]] char get_public_icon_at(const Coordinate &coordinate) const override;
 
-        [[nodiscard]] bool validate() const override;
-
         [[nodiscard]] inline bool is_in_bounds(const Coordinate &coordinate) const noexcept override {
             return (0 <= coordinate.x && coordinate.x < configuration_.field_width)
                     && (0 <= coordinate.y && coordinate.y < configuration_.field_height);

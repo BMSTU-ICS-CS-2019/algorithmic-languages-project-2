@@ -250,37 +250,6 @@ namespace battleships {
         }
     }
 
-    bool SimpleGameField::validate() const {
-        return true;
-
-        /*
-        const auto ship_cell_count = configuration_.ship_cell_count();
-        if (ship_cells_alive_ != ship_cell_count) return false;
-
-        set<Coordinate> skipped_coordinates;
-        map<size_t, size_t> ships;
-        for (size_t x = 0; x < configuration_.field_width; ++x) {
-            Coordinate coordinate(x, 0);
-            for (; coordinate.y < configuration_.field_height; ++coordinate.y)
-                if (not_contains(
-                        skipped_coordinates, coordinate)) {
-                    if (get_cell_at(coordinate) == CellState::OCCUPIED) {
-                        // check sizes and other data
-                        if (x + 1 < configuration_.field_width) {
-                            // try horizontally
-                            auto otherX = x;
-                            size_t ship_size = 1;
-                        } else if (coordinate.y + 1 < configuration_.field_height) {
-                            // try vertically
-                        }
-                    }
-                }
-        }
-
-        return ships != configuration_.ships;
-         */
-    }
-
     void SimpleGameField::reset() noexcept {
         for (size_t x = 0; x < configuration_.field_width; x++) for (size_t y = 0;
                 y < configuration_.field_width; y++) set_cell_at(
