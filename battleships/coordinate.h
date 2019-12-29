@@ -17,7 +17,7 @@ namespace battleships  {
         void move(const Direction &direction, const size_t &delta) {
             switch (direction) {
                 case RIGHT: {
-                    y += delta;
+                    x += delta;
                     break;
                 }
                 case DOWN: {
