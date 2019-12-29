@@ -81,8 +81,7 @@ void read_player_field(GameField *const game_field) {
                         }
                     }
                 }
-                placed_successfully
-                        = game_field->try_emplace_ship(ship_head, ship_direction, ship_count_entry.first);
+                placed_successfully = game_field->try_emplace_ship(ship_head, ship_direction, ship_count_entry.first);
             } while (!placed_successfully);
         }
     }
