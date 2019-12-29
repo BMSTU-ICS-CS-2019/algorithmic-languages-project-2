@@ -136,7 +136,7 @@ bool play_against_real_rival() {
                 case GameField::WIN: {
                     game.print_to_console();
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has won this game!" << endl;
-                    return true;
+                    return first_player_turn;
                 }
                 default: throw invalid_argument("Unknown player-attack status");
             }
@@ -208,8 +208,8 @@ int main() {
         string input;
         cin >> input;
         if (input == "p" || input == "player") {
-            if (play_against_real_rival()) cli::print_win_message();
-            else cli::print_loose_message();
+            if (play_against_real_rival()) cli::print_player1_win_message();
+            else cli::print_player2_win_message();
         }
         else if (input == "b" || input == "bot") {
             if (play_against_bot_rival()) cli::print_win_message();
