@@ -47,12 +47,16 @@ void read_player_field(GameField *const game_field) {
     cout << "> Enter valid field configurations" << endl;
     const auto width = game_field->get_configuration().field_width,
             height = game_field->get_configuration().field_height;
-    for (const auto &ship_count_entry : game_field->get_configuration().ships) {
+
+    const auto ships = game_field->get_configuration().ships;
+    for (auto iterator = ships.rbegin(); iterator != ships.rend(); ++iterator) {
+        const auto ship_count_entry = *iterator;
         for (size_t ship_id = 1; ship_id <= ship_count_entry.second; /* count of such ships */ ++ship_id) {
-            cout << ">> Place " << ship_count_entry.first << "-celled ship ["
-                 << ship_id << '/' << ship_count_entry.second << ']' << endl;
             bool placed_successfully;
             do {
+                game_field->print_to_console();
+                cout << ">> Place " << ship_count_entry.first << "-celled ship ["
+                     << ship_id << '/' << ship_count_entry.second << ']' << endl;
                 cout << ">>> Enter the location of your ship's head" << endl;
                 const auto ship_head = read_coordinate_safely(width, height);
                 Direction ship_direction;
@@ -80,7 +84,6 @@ void read_player_field(GameField *const game_field) {
                 placed_successfully
                         = game_field->try_emplace_ship(ship_head, ship_direction, ship_count_entry.first);
             } while (!placed_successfully);
-            game_field->print_to_console();
         }
     }
 }
