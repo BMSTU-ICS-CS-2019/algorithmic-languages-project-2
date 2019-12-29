@@ -143,7 +143,7 @@ bool play_against_bot_rival() {
     // get the configuration object after the game is created in case it gets modified
     const auto configuration = game.configuration();
 
-    SimpleRivalBot rival(game.field_1(), game.field_2());
+    SimpleRivalBot rival(game.field_2(), game.field_1());
 
     read_player_field(game.field_1());
     rival.place_ships();
