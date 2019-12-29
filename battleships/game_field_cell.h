@@ -44,7 +44,6 @@ namespace battleships {
         }
 
         void discover() override {
-            if (discovered_) throw runtime_error("This cell is already discovered");
             discovered_ = true;
         }
 
