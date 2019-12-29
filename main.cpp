@@ -43,7 +43,7 @@ GameConfiguration default_game_configuration() {
     return configuration;
 }
 
-void read_player_field(GameField * const game_field) {
+void read_player_field(GameField *const game_field) {
     while (true) {
         cout << "> Enter valid field configurations" << endl;
         const auto width = game_field->get_configuration().field_width,
@@ -51,7 +51,7 @@ void read_player_field(GameField * const game_field) {
         for (const auto &ship_count_entry : game_field->get_configuration().ships) {
             for (size_t ship_id = 1; ship_id <= ship_count_entry.second; /* count of such ships */ ++ship_id) {
                 cout << ">> Place " << ship_count_entry.first << "-celled ship ["
-                        << ship_id << '/' << ship_count_entry.second << ']'<< endl;
+                     << ship_id << '/' << ship_count_entry.second << ']' << endl;
 
                 bool placed_successfully;
                 do {
@@ -68,16 +68,13 @@ void read_player_field(GameField * const game_field) {
                             if (direction_string == "u" || direction_string == "up") {
                                 ship_direction = battleships::DOWN; // due to visual inversion
                                 break;
-                            }
-                            else if (direction_string == "r" || direction_string == "right") {
+                            } else if (direction_string == "r" || direction_string == "right") {
                                 ship_direction = battleships::RIGHT;
                                 break;
-                            }
-                            else if (direction_string == "d" || direction_string == "down") {
+                            } else if (direction_string == "d" || direction_string == "down") {
                                 ship_direction = battleships::UP; // due to visual inversion
                                 break;
-                            }
-                            else if (direction_string == "l" || direction_string == "left") {
+                            } else if (direction_string == "l" || direction_string == "left") {
                                 ship_direction = battleships::LEFT;
                                 break;
                             }
@@ -138,7 +135,8 @@ bool play_against_real_rival() {
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has won this game!" << endl;
                     return first_player_turn;
                 }
-                default: throw invalid_argument("Unknown player-attack status");
+                default:
+                    throw invalid_argument("Unknown player-attack status");
             }
             break;
         }
@@ -203,18 +201,16 @@ int main() {
 
     while (true) {
         cout << "Wanna play?" << endl << endl
-                << "Enter `(p)layer` to play against the player, `(b)ot` to play against the bot"
-                   " or `(e)xit` or `(q)uit`to exit" << endl;
+             << "Enter `(p)layer` to play against the player, `(b)ot` to play against the bot"
+                " or `(e)xit` or `(q)uit`to exit" << endl;
         string input;
         cin >> input;
         if (input == "p" || input == "player") {
             if (play_against_real_rival()) cli::print_player1_win_message();
             else cli::print_player2_win_message();
-        }
-        else if (input == "b" || input == "bot") {
+        } else if (input == "b" || input == "bot") {
             if (play_against_bot_rival()) cli::print_win_message();
             else cli::print_loose_message();
-        }
-        else if (input == "e" || input == "q" || input == "exit" || input == "quit") return 0;
+        } else if (input == "e" || input == "q" || input == "exit" || input == "quit") return 0;
     }
 }
