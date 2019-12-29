@@ -123,6 +123,7 @@ namespace battleships {
      * Game logic
      */
 
+
     GameField::AttackStatus SimpleGameField::attack(const Coordinate &coordinate) {
         check_bounds(coordinate);
 
@@ -136,7 +137,6 @@ namespace battleships {
         attempt_destroy_ship(coordinate);
         --ship_cells_alive_;
 
-        cout << ship_cells_alive_ << endl;
         return ship_cells_alive_ == 0 ? WIN : DESTROY_SHIP;
     }
 
