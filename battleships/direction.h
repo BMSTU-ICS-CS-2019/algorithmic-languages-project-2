@@ -79,7 +79,7 @@ namespace battleships {
     }
 
     inline static Direction random_horizontal_direction(random_device &random) {
-        switch (direction_int_distribution(random)) {
+        switch (horizontal_direction_int_distribution(random)) {
             case 0: return RIGHT;
             case 1: return LEFT;
             default: throw runtime_error("Generated random value is out of range");
@@ -87,7 +87,7 @@ namespace battleships {
     }
 
     inline static Direction random_vertical_direction(random_device &random) {
-        switch (direction_int_distribution(random)) {
+        switch (vertical_direction_int_distribution(random)) {
             case 0: return DOWN;
             case 1: return UP;
             default: throw runtime_error("Generated random value is out of range");
