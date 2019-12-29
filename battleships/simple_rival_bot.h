@@ -6,7 +6,6 @@
 
 #include "rival_bot.h"
 #include "direction.h"
-#include "simple_game.h"
 #include "ship_position.h"
 
 using std::default_random_engine;
@@ -24,7 +23,7 @@ namespace battleships {
 
         // Uninitialized members
 
-        SimpleGame *const game_;
+        GameField *const own_field_, *const rival_field_;
 
         // Initialized members
 
@@ -36,11 +35,16 @@ namespace battleships {
 
 
         /* non-const */ bernoulli_distribution free_spot_lookup_side_random_distribution_;
-        /* non-const */ uniform_int_distribution<size_t> x_random_distribution_, y_random_distribution_;
+        /* non-const */ uniform_int_distribution<size_t> own_x_random_distribution_, own_y_random_distribution_,
+                rival_x_random_distribution_, rival_y_random_distribution_;
         /* non-const */ uniform_int_distribution<int8_t> direction_random_distribution_;
 
-        inline Coordinate random_coordinate() {
-            return Coordinate(x_random_distribution_(random_), y_random_distribution_(random_));
+        inline Coordinate random_own_coordinate() {
+            return Coordinate(own_x_random_distribution_(random_), own_y_random_distribution_(random_));
+        }
+
+        inline Coordinate random_rival_coordinate() {
+            return Coordinate(rival_x_random_distribution_(random_), rival_y_random_distribution_(random_));
         }
 
         inline void locate_not_visited_spot(/* mut */ Coordinate &coordinate, const GameField *const game_field) {
@@ -63,10 +67,12 @@ namespace battleships {
 
     public:
 
-        explicit SimpleRivalBot(SimpleGame *const game)
-                : game_(game),
-                  x_random_distribution_(0, game->configuration().field_width - 1),
-                  y_random_distribution_(0, game->configuration().field_height - 1),
+        explicit SimpleRivalBot(GameField *const own_field, GameField *const rival_field)
+                : own_field_(own_field), rival_field_(rival_field),
+                  own_x_random_distribution_(0, own_field_->get_configuration().field_width - 1),
+                  own_y_random_distribution_(0, own_field_->get_configuration().field_height - 1),
+                  rival_x_random_distribution_(0, rival_field_->get_configuration().field_width - 1),
+                  rival_y_random_distribution_(0, rival_field_->get_configuration().field_height - 1),
                   direction_random_distribution_(0, 3) {}
 
         void place_ships() override;

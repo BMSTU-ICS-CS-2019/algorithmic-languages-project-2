@@ -11,17 +11,19 @@ using common_util::get_random;
 namespace battleships  {
 
     void SimpleRivalBot::place_ship_randomly(const size_t &ship_size) {
-        const auto field = game_->field_2();
-        auto original_coordinate = random_coordinate();
-        locate_not_visited_spot(original_coordinate, field);
+        auto original_coordinate = random_own_coordinate();
+        locate_not_visited_spot(original_coordinate, own_field_);
+
+
+        const auto width = own_field_->get_configuration().field_width,
+                height = own_field_->get_configuration().field_height;
 
         auto direction = random_direction(random_);
-        const auto width = field->get_configuration().field_width, height = field->get_configuration().field_height;
         for (int x = 0; x < width; ++x) for (int y = 0; y < height; ++y) {
             const auto tested_coordinate
                     = Coordinate((original_coordinate.x + x) % width, (original_coordinate.y + y) % height);
             for (int i = 0; i < 4; ++i) {
-                if (field->try_emplace_ship(tested_coordinate, direction, ship_size)) return;
+                if (own_field_->try_emplace_ship(tested_coordinate, direction, ship_size)) return;
                 direction = rotate_direction_counter_clockwise(direction);
             }
         }
@@ -30,10 +32,10 @@ namespace battleships  {
     }
 
     void SimpleRivalBot::place_ships() {
-        const auto ship_counts = game_->configuration().ships;
-        for (auto iterator = ship_counts.rbegin(); iterator != ship_counts.rend(); ++iterator) {
+        const auto ships = own_field_->get_configuration().ships;
+        for (auto iterator = ships.rbegin(); iterator != ships.rend(); ++iterator) {
             const auto entry = *iterator;
-            for (size_t i = 0; i < entry.second; ++i) place_ship_randomly(entry.first);
+            for (size_t shipId = 0; shipId < entry.second; ++shipId) place_ship_randomly(entry.first);
         }
     }
 
@@ -44,13 +46,11 @@ namespace battleships  {
     bool SimpleRivalBot::continue_attack() {
         const auto initial_coordinate = attacked_ship_coordinate_.value();
 
-        const auto field = game_->field_1();
-
         //  attempt an attack to reveal the direction
         if (ship_direction_ == NONE) {
             const auto attack_direction
                     = random_available_attack_direction(attacked_ship_coordinate_.value());
-            switch (field->attack(initial_coordinate.move(attack_direction, 1))) {
+            switch (rival_field_->attack(initial_coordinate.move(attack_direction, 1))) {
                 case GameField::ALREADY_ATTACKED: throw runtime_error("Attempt to attack an already attacked point");
                 case GameField::MISS: return false;
                 case GameField::DESTROY_SHIP: {
@@ -73,14 +73,14 @@ namespace battleships  {
         {
             bool direction_inverted = false;
             while (true) {
-                if (field->is_out_of_bounds(attacked_coordinate)) {
+                if (rival_field_->is_out_of_bounds(attacked_coordinate)) {
                     if (direction_inverted) throw runtime_error("Could not find an appropriate point to attack");
                     else {
                         attacked_coordinate = initial_coordinate.move(attack_direction, -1);
                         direction_inverted = true;
                     }
                 }
-                switch (field->attack(attacked_coordinate)) {
+                switch (rival_field_->attack(attacked_coordinate)) {
                     case GameField::ALREADY_ATTACKED: {
                         if (direction_inverted) throw runtime_error("Could not find an appropriate point to attack");
                         else {
@@ -105,10 +105,10 @@ namespace battleships  {
 
     bool SimpleRivalBot::random_attack() {
         while (true) {
-            auto attacked_coordinate = random_coordinate();
-            locate_not_visited_spot(attacked_coordinate, game_->field_1());
+            auto attacked_coordinate = random_own_coordinate();
+            locate_not_visited_spot(attacked_coordinate, rival_field_);
 
-            const auto attack_result = game_->field_1()->attack(attacked_coordinate);
+            const auto attack_result = rival_field_->attack(attacked_coordinate);
             switch (attack_result) {
                 case GameField::ALREADY_ATTACKED: throw runtime_error("Cell was expected to not be visited");
                 case GameField::MISS: return GameField::MISS; // just missed
@@ -132,7 +132,7 @@ namespace battleships  {
     Direction SimpleRivalBot::random_available_attack_direction(const Coordinate &coordinate) {
         auto direction = random_direction(random_);
 
-        const auto field = game_->field_1();
+        const auto field = rival_field_;
         if (field->is_discovered(coordinate.move(direction, 1))) {
             if (field->is_discovered(coordinate.move(direction, -1))) {
                 direction = rotate_direction_clockwise(direction);
