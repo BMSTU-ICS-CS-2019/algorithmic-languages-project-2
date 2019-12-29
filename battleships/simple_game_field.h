@@ -24,7 +24,7 @@ namespace battleships {
 
         inline void check_bounds(const Coordinate &coordinate) const noexcept(false) {
             if (is_out_of_bounds(coordinate)) throw out_of_range(
-                    "Attacked coordinate (" + to_string(coordinate.x)
+                    "Coordinate (" + to_string(coordinate.x)
                     + ":" + to_string(coordinate.y) + ") is out of its range"
             );
         }
