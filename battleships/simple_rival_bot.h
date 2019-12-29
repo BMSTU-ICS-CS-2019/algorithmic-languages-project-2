@@ -31,18 +31,6 @@ namespace battleships {
         optional<Coordinate> attacked_ship_coordinate_;
 
         ShipPosition ship_direction_ = NONE;
-        /*
-        optional<Coordinate> initial_ship_coordinate_;
-        set<Coordinate> possible_ship_coordinates_;
-         */
-        /*
-        optional<Coordinate> ship_start_;
-        optional<ShipPosition> ship_position_;
-        set<Direction> possible_ship_directions_;
-
-        set<Coordinate> possible_ship_coordinates_;
-        set<Coordinate> visited_possible_ship_coordinates_;
-         */
 
         random_device random_;
 
