@@ -94,8 +94,11 @@ bool play_against_real_rival() {
 
     cout << "<< Player 1 >>" << endl;
     read_player_field(game.field_1());
+    cli::clear();
+
     cout << "<< Player 2 >>" << endl;
     read_player_field(game.field_2());
+    cli::clear();
 
     bool first_player_turn = true;
     while (true) {
