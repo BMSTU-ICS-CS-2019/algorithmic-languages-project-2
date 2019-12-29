@@ -2,8 +2,10 @@
 
 #include <random>
 #include <stdexcept>
+#include <string>
 
 using std::random_device;
+using std::string;
 using std::uniform_int_distribution;
 using std::invalid_argument;
 using std::runtime_error;
@@ -91,6 +93,16 @@ namespace battleships {
             case 0: return DOWN;
             case 1: return UP;
             default: throw runtime_error("Generated random value is out of range");
+        }
+    }
+
+    inline static string direction_name(const Direction &direction) {
+        switch (direction) {
+            case RIGHT: return "right";
+            case DOWN: return "down";
+            case LEFT: return "left";
+            case UP: return "up";
+            default: throw invalid_argument(&"Unknown direction " [direction]);
         }
     }
 }

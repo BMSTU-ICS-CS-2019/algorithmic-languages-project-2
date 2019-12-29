@@ -23,10 +23,11 @@ namespace battleships {
         size_t ship_cells_alive_ = 0;
 
         inline void check_bounds(const Coordinate &coordinate) const noexcept(false) {
-            if (is_out_of_bounds(coordinate)) throw out_of_range(
-                    "Coordinate (" + to_string(coordinate.x)
-                    + ":" + to_string(coordinate.y) + ") is out of its range"
-            );
+            if (is_out_of_bounds(coordinate))
+                throw out_of_range(
+                        "Coordinate (" + to_string(coordinate.x)
+                        + ":" + to_string(coordinate.y) + ") is out of its range"
+                );
         }
 
         [[nodiscard]] inline GameFieldCell *get_cell_at(const Coordinate &coordinate) const {
@@ -75,7 +76,8 @@ namespace battleships {
 
         [[nodiscard]] bool can_place_near(const Coordinate &coordinate) const override;
 
-        bool try_emplace_ship(const Coordinate &coordinate, const Direction &direction, const size_t &size) override;
+        bool try_emplace_ship(const Coordinate &base_coordinate,
+                              const Direction &direction, const size_t &size) override;
 
         AttackStatus attack(const Coordinate &coordinate) override;
 
@@ -89,12 +91,12 @@ namespace battleships {
 
         [[nodiscard]] inline bool is_in_bounds(const Coordinate &coordinate) const noexcept override {
             return (0 <= coordinate.x && coordinate.x < configuration_.field_width)
-                    && (0 <= coordinate.y && coordinate.y < configuration_.field_height);
+                   && (0 <= coordinate.y && coordinate.y < configuration_.field_height);
         }
 
         [[nodiscard]] inline bool is_out_of_bounds(const Coordinate &coordinate) const noexcept override {
             return (coordinate.x < 0 || configuration_.field_width <= coordinate.x)
-                    || (coordinate.y < 0 || configuration_.field_height <= coordinate.y);
+                   || (coordinate.y < 0 || configuration_.field_height <= coordinate.y);
         }
 
         void reset() noexcept override;

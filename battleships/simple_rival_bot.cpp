@@ -5,6 +5,7 @@
 
 using std::invalid_argument;
 using std::runtime_error;
+using std::to_string;
 using common_util::not_contains;
 using common_util::get_random;
 
@@ -14,21 +15,21 @@ namespace battleships  {
         auto original_coordinate = random_own_coordinate();
         locate_not_visited_spot(original_coordinate, own_field_);
 
-
         const auto width = own_field_->get_configuration().field_width,
                 height = own_field_->get_configuration().field_height;
 
         auto direction = random_direction(random_);
-        for (int x = 0; x < width; ++x) for (int y = 0; y < height; ++y) {
-            const auto tested_coordinate
-                    = Coordinate((original_coordinate.x + x) % width, (original_coordinate.y + y) % height);
+        for (int deltaX = 0; deltaX < width; ++deltaX) for (int deltaY = 0; deltaY < height; ++deltaY) {
+            const auto tested_coordinate = Coordinate(
+                    (original_coordinate.x + deltaX) % width, (original_coordinate.y + deltaY) % height
+            );
             for (int i = 0; i < 4; ++i) {
                 if (own_field_->try_emplace_ship(tested_coordinate, direction, ship_size)) return;
                 direction = rotate_direction_counter_clockwise(direction);
             }
         }
 
-        throw runtime_error("Unable to place s ship at the field");
+        throw runtime_error("Unable to place " + to_string(ship_size) + "-celled ship at the field");
     }
 
     void SimpleRivalBot::place_ships() {

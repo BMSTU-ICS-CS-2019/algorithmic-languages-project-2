@@ -57,8 +57,7 @@ namespace battleships {
         try_make_discovered(coordinate.move(RIGHT, 1));
         try_make_discovered(coordinate.move(LEFT, 1));
 
-        const auto up = coordinate.move(UP, 1);
-        const auto down = coordinate.move(DOWN, 1);
+        const auto up = coordinate.move(UP, 1), down = coordinate.move(DOWN, 1);
         try_make_discovered(up);
         try_make_discovered(down);
 
@@ -147,33 +146,31 @@ namespace battleships {
     }
 
 
-    bool SimpleGameField::try_emplace_ship(const Coordinate &coordinate,
+    bool SimpleGameField::try_emplace_ship(const Coordinate &base_coordinate,
                                            const Direction &direction, const size_t &size) {
 
-        check_bounds(coordinate);
+        check_bounds(base_coordinate);
         // check if the ship firs according to the borders
 
+        if (!can_place_at(base_coordinate)) return false;
+
         if (size == 1) {
-            if (can_place_at(coordinate)) {
-                set_cell_at(coordinate, new ShipGameFieldCell(size, NONE));
-                return true;
-            } else return false;
+            set_cell_at(base_coordinate, new ShipGameFieldCell(size, NONE));
+            return true;
         }
 
         {
-            auto checked_coordinate = coordinate.move(direction, size - 1);
-            cout << "  Coord: " << coordinate.to_string() << endl;
-            cout << "Checked: " << checked_coordinate.to_string() << endl;
+            auto checked_coordinate = base_coordinate.move(direction, size - 1);
             if (is_out_of_bounds(checked_coordinate)) return false;
 
             do {
-                if (!can_place_at(coordinate)) return false;
+                if (!can_place_at(checked_coordinate)) return false;
                 checked_coordinate.move(direction, -1);
-            } while (checked_coordinate != coordinate);
+            } while (checked_coordinate != base_coordinate);
         }
 
         // to start from
-        for (size_t i = 0; i < size; ++i) set_cell_at(coordinate.move(direction, i), new ShipGameFieldCell(
+        for (size_t i = 0; i < size; ++i) set_cell_at(base_coordinate.move(direction, i), new ShipGameFieldCell(
                 size, is_vertical_direction(direction) ? VERTICAL : HORIZONTAL
         ));
 
@@ -263,7 +260,6 @@ namespace battleships {
 
     bool SimpleGameField::can_place_at(const Coordinate &coordinate) const {
         check_bounds(coordinate);
-        cout << "Checking for " << coordinate.to_string() << endl;
 
         if (!get_cell_at(coordinate)->is_empty()) return false;
 
@@ -272,15 +268,12 @@ namespace battleships {
             auto tested_coordinate = coordinate;
 
             tested_coordinate.move(tested_direction, 1);
-            cout << "1) " << tested_coordinate.to_string() << endl;
             if (!can_place_near(tested_coordinate)) return false;
 
             tested_coordinate.move(rotate_direction_clockwise(tested_direction), 1);
-            cout << "2) " << tested_coordinate.to_string() << endl;
             if (!can_place_near(tested_coordinate)) return false;
         }
 
         return true;
-
     }
 }
