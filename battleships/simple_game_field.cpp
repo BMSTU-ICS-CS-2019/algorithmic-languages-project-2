@@ -69,49 +69,45 @@ namespace battleships {
         const auto ship_cell = (ShipGameFieldCell*) cell;
 
         const auto position = ship_cell->get_position();
-        cout << "Position " << (position == NONE ? "NONE" : position == VERTICAL ? "VERTICAL" : "HORIZONTAL") << endl;
         if (position == NONE) {
             surround_destroyed_ship_cell(coordinate); // simply destroy the current point as it is a small ship
             return true;
         }
-        else {
-            // map of other cells which correspond to this ship
-            map<Coordinate, GameFieldCell*> destroyed_cells;
-            {
-                size_t ship_cells_left = ship_cell->get_ship_size() - 1;
-                auto direction = position == VERTICAL ? UP : RIGHT;
-                for (size_t i = 0; i < 2; i++) { // go in both directions
-                    if (ship_cells_left == 0) break; // there is no need to test for any other ship cells
-                    auto tested_coordinate = coordinate;
-                    while (true) {
-                        tested_coordinate.move(direction, 1); // mark the current cell as the one destroyed
-                        if (!is_in_bounds(tested_coordinate)) break; // border reached
 
-                        const auto tested_cell = get_cell_at(tested_coordinate);
-                        if (tested_cell->is_empty()) break; // end of ship reached
-                        if (tested_cell->is_discovered()) {
-                            destroyed_cells.insert(pair<Coordinate, GameFieldCell*>(tested_coordinate, tested_cell));
-                            if (--ship_cells_left == 0) break; // there is no need to test for any other ship cells
-                        } else return false; // the ship is not yet fully destroyed
-                    }
+        // map of other cells which correspond to this ship
+        map<Coordinate, GameFieldCell*> destroyed_cells;
+        {
+            size_t ship_cells_left = ship_cell->get_ship_size() - 1;
+            auto direction = position == VERTICAL ? UP : RIGHT;
+            for (size_t i = 0; i < 2; i++) { // go in both directions
+                if (ship_cells_left == 0) break; // there is no need to test for any other ship cells
+                auto tested_coordinate = coordinate;
+                while (true) {
+                    tested_coordinate.move(direction, 1); // mark the current cell as the one destroyed
+                    if (!is_in_bounds(tested_coordinate)) break; // border reached
 
-                    direction = invert_direction(direction);
+                    const auto tested_cell = get_cell_at(tested_coordinate);
+                    if (tested_cell->is_empty()) break; // end of ship reached
+                    if (tested_cell->is_discovered()) {
+                        destroyed_cells.insert(pair<Coordinate, GameFieldCell*>(tested_coordinate, tested_cell));
+                        if (--ship_cells_left == 0) break; // there is no need to test for any other ship cells
+                    } else return false; // the ship is not yet fully destroyed
                 }
-            }
 
-            // destroy the attacked cell of the ship
-            ship_cell->discover();
-            surround_destroyed_ship_cell(coordinate);
-            // destroy each other cells of this ship
-            for (const auto &destroyed_cell : destroyed_cells) {
-                destroyed_cell.second->discover();
-                surround_destroyed_ship_cell(destroyed_cell.first);
+                direction = invert_direction(direction);
             }
-
-            return true;
         }
 
-        return false;
+        // destroy the attacked cell of the ship
+        ship_cell->discover();
+        surround_destroyed_ship_cell(coordinate);
+        // destroy each other cells of this ship
+        for (const auto &destroyed_cell : destroyed_cells) {
+            destroyed_cell.second->discover();
+            surround_destroyed_ship_cell(destroyed_cell.first);
+        }
+
+        return true;
     }
 
     /*
