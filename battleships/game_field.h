@@ -22,6 +22,8 @@ namespace battleships {
 
         [[nodiscard]] virtual bool is_discovered(const Coordinate &coordinate) const = 0;
 
+        [[nodiscard]] virtual bool can_be_attacked(const Coordinate &coordinate) const = 0;
+
         [[nodiscard]] virtual bool can_place_near(const Coordinate &coordinate) const = 0;
 
         virtual bool try_emplace_ship(const Coordinate &coordinate, const Direction &direction, const size_t &size) = 0;

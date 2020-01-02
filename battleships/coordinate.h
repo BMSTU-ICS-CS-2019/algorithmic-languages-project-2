@@ -72,7 +72,7 @@ namespace battleships  {
         }
 
         [[nodiscard]] string to_string() const {
-            return std::to_string(x) + " " + std::to_string(y);
+            return char(x + 'A') + std::to_string(y);
         }
     };
 }

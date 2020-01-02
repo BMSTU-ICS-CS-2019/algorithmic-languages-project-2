@@ -53,18 +53,12 @@ namespace battleships {
         }
     }
 
-    void SimpleGameField::surround_ship_cell(const Coordinate &coordinate) {
-        try_make_discovered(coordinate.move(RIGHT, 1));
-        try_make_discovered(coordinate.move(LEFT, 1));
-
-        const auto up = coordinate.move(UP, 1), down = coordinate.move(DOWN, 1);
-        try_make_discovered(up);
-        try_make_discovered(down);
-
-        try_make_discovered(up.move(RIGHT, 1));
-        try_make_discovered(up.move(LEFT, 1));
-        try_make_discovered(down.move(RIGHT, 1));
-        try_make_discovered(down.move(LEFT, 1));
+    void SimpleGameField::surround_destroyed_ship_cell(const Coordinate &coordinate) {
+        for (const auto &direction : ALL_DIRECTIONS) {
+            const auto current_coordinate = coordinate.move(direction, 1);
+            try_make_discovered(current_coordinate);
+            try_make_discovered(current_coordinate.move(rotate_direction_clockwise(direction), 1));
+        }
     }
 
     bool SimpleGameField::attempt_destroy_ship(const Coordinate &coordinate) {
@@ -75,11 +69,9 @@ namespace battleships {
         const auto ship_cell = (ShipGameFieldCell*) cell;
 
         const auto position = ship_cell->get_position();
-        if (position == NONE) {
-            // simply destroy the current point as it is a small ship
-            ship_cell->discover();
-            surround_ship_cell(coordinate);
-        } else {
+        cout << "Position " << (position == NONE ? "NONE" : position == VERTICAL ? "VERTICAL" : "HORIZONTAL") << endl;
+        if (position == NONE) surround_destroyed_ship_cell(coordinate); // simply destroy the current point as it is a small ship
+        else {
             // map of other cells which correspond to this ship
             map<Coordinate, GameFieldCell*> destroyed_cells;
             {
@@ -106,11 +98,11 @@ namespace battleships {
 
             // destroy the attacked cell of the ship
             ship_cell->discover();
-            try_make_discovered(coordinate);
+            surround_destroyed_ship_cell(coordinate);
             // destroy each other cells of this ship
             for (const auto &destroyed_cell : destroyed_cells) {
                 destroyed_cell.second->discover();
-                surround_ship_cell(destroyed_cell.first);
+                surround_destroyed_ship_cell(destroyed_cell.first);
             }
 
             return true;
@@ -126,6 +118,7 @@ namespace battleships {
 
     GameField::AttackStatus SimpleGameField::attack(const Coordinate &coordinate) {
         check_bounds(coordinate);
+        cout << "Attack on " << coordinate.to_string() << endl;
 
         const auto cell = get_cell_at(coordinate);
 
@@ -134,10 +127,9 @@ namespace battleships {
 
         if (cell->is_empty()) return MISS;
 
-        attempt_destroy_ship(coordinate);
         --ship_cells_alive_;
 
-        return ship_cells_alive_ == 0 ? WIN : DESTROY_SHIP;
+        return attempt_destroy_ship(coordinate) ? ship_cells_alive_ == 0 ? WIN : DESTROY_SHIP : DAMAGE_SHIP;
     }
 
     bool SimpleGameField::is_discovered(const Coordinate &coordinate) const {
@@ -146,6 +138,9 @@ namespace battleships {
         return get_cell_at(coordinate)->is_discovered();
     }
 
+    bool SimpleGameField::can_be_attacked(const Coordinate &coordinate) const {
+        return !is_out_of_bounds(coordinate) && !get_cell_at(coordinate)->is_discovered();
+    }
 
     bool SimpleGameField::try_emplace_ship(const Coordinate &base_coordinate,
                                            const Direction &direction, const size_t &size) {

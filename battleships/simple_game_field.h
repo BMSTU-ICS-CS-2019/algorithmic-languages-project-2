@@ -42,7 +42,7 @@ namespace battleships {
 
         inline void try_make_discovered(const Coordinate &coordinate);
 
-        inline void surround_ship_cell(const Coordinate &coordinate);
+        inline void surround_destroyed_ship_cell(const Coordinate &coordinate);
 
         /**
          * @brief Attempts to destroy the ship by attacking the given point.
@@ -73,6 +73,8 @@ namespace battleships {
          */
 
         [[nodiscard]] bool is_discovered(const Coordinate &coordinate) const override;
+
+        [[nodiscard]] bool can_be_attacked(const Coordinate &coordinate) const override;
 
         [[nodiscard]] bool can_place_near(const Coordinate &coordinate) const override;
 

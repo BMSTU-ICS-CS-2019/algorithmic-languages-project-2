@@ -40,23 +40,29 @@ namespace battleships  {
         }
     }
 
-    bool SimpleRivalBot::act() {
-        return attacked_ship_coordinate_ ? continue_attack() : random_attack();
+    bool SimpleRivalBot::act(AttackCallback *attack_callback) {
+        return attacked_ship_coordinate_
+                ? continue_attack(EmptyAttackCallback::or_empty(attack_callback))
+                : random_attack(EmptyAttackCallback::or_empty(attack_callback));
     }
 
-    bool SimpleRivalBot::continue_attack() {
+    bool SimpleRivalBot::continue_attack(AttackCallback *const attack_callback) {
         const auto initial_coordinate = attacked_ship_coordinate_.value();
 
         //  attempt an attack to reveal the direction
         if (ship_direction_ == NONE) {
             const auto attack_direction
                     = random_available_attack_direction(attacked_ship_coordinate_.value());
-            switch (rival_field_->attack(initial_coordinate.move(attack_direction, 1))) {
+            const auto attacked_coordinate = initial_coordinate.move(attack_direction, 1);
+
+            const auto attack_status = rival_field_->attack(attacked_coordinate);
+            attack_callback->on_attack(attacked_coordinate, attack_status);
+            switch (attack_status) {
                 case GameField::ALREADY_ATTACKED: throw runtime_error("Attempt to attack an already attacked point");
                 case GameField::MISS: return false;
                 case GameField::DESTROY_SHIP: {
                     handle_ship_destruction();
-                    return random_attack();
+                    return random_attack(attack_callback);
                 }
                 case GameField::WIN: return true;
                 case GameField::DAMAGE_SHIP: {
@@ -81,7 +87,10 @@ namespace battleships  {
                         direction_inverted = true;
                     }
                 }
-                switch (rival_field_->attack(attacked_coordinate)) {
+
+                const auto attack_status = rival_field_->attack(attacked_coordinate);
+                attack_callback->on_attack(attacked_coordinate, attack_status);
+                switch (attack_status) {
                     case GameField::ALREADY_ATTACKED: {
                         if (direction_inverted) throw runtime_error("Could not find an appropriate point to attack");
                         else {
@@ -94,7 +103,7 @@ namespace battleships  {
                     case GameField::DAMAGE_SHIP: break; // simply continue the attack in this direction
                     case GameField::DESTROY_SHIP: {
                         handle_ship_destruction();
-                        return random_attack();
+                        return random_attack(attack_callback);
                     }
                     case GameField::WIN: return true;
                 }
@@ -104,19 +113,20 @@ namespace battleships  {
         }
     }
 
-    bool SimpleRivalBot::random_attack() {
+    bool SimpleRivalBot::random_attack(AttackCallback *const attack_callback) {
         while (true) {
             auto attacked_coordinate = random_own_coordinate();
             locate_not_visited_spot(attacked_coordinate, rival_field_);
 
-            const auto attack_result = rival_field_->attack(attacked_coordinate);
-            switch (attack_result) {
+            const auto attack_status = rival_field_->attack(attacked_coordinate);
+            attack_callback->on_attack(attacked_coordinate, attack_status);
+            switch (attack_status) {
                 case GameField::ALREADY_ATTACKED: throw runtime_error("Cell was expected to not be visited");
                 case GameField::MISS: return false; // just missed
                 case GameField::DAMAGE_SHIP: {
                     // Multi-celled ship
                     attacked_ship_coordinate_ = attacked_coordinate;
-                    continue_attack();
+                    continue_attack(attack_callback);
                 }
                 /* single-celled ship destruction */
                 case GameField::DESTROY_SHIP: continue;
@@ -133,20 +143,13 @@ namespace battleships  {
     Direction SimpleRivalBot::random_available_attack_direction(const Coordinate &coordinate) {
         auto direction = random_direction(random_);
 
-        const auto field = rival_field_;
-        if (field->is_discovered(coordinate.move(direction, 1))) {
-            if (field->is_discovered(coordinate.move(direction, -1))) {
-                direction = rotate_direction_clockwise(direction);
-                if (field->is_discovered(coordinate.move(direction, 1))) {
-                    if (field->is_discovered(coordinate.move(direction, -1))) throw runtime_error(
-                            "No available attack direction for coordinate " + coordinate.to_string()
-                    );
-                    return invert_direction(direction);
-                }
-                return direction;
-            }
-            return invert_direction(direction);
-        }
-        return direction;
+        if (rival_field_->can_be_attacked(coordinate.move(direction, 1))) return direction;
+        if (rival_field_->can_be_attacked(coordinate.move(direction, -1))) return invert_direction(direction);
+
+        direction = rotate_direction_clockwise(direction);
+        if (rival_field_->can_be_attacked(coordinate.move(direction, 1))) return direction;
+        if (rival_field_->can_be_attacked(coordinate.move(direction, -1))) return invert_direction(direction);
+
+        throw runtime_error("No available attack direction for coordinate " + coordinate.to_string());
     }
 }

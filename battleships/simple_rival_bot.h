@@ -57,9 +57,9 @@ namespace battleships {
 
         void place_ship_randomly(const size_t &ship_size);
 
-        bool continue_attack();
+        bool continue_attack(AttackCallback *attack_callback);
 
-        bool random_attack();
+        bool random_attack(AttackCallback *attack_callback);
 
         void handle_ship_destruction();
 
@@ -77,7 +77,7 @@ namespace battleships {
 
         void place_ships() override;
 
-        bool act() override;
+        bool act(AttackCallback *attack_callback) override;
     };
 }
 
