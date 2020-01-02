@@ -70,7 +70,10 @@ namespace battleships {
 
         const auto position = ship_cell->get_position();
         cout << "Position " << (position == NONE ? "NONE" : position == VERTICAL ? "VERTICAL" : "HORIZONTAL") << endl;
-        if (position == NONE) surround_destroyed_ship_cell(coordinate); // simply destroy the current point as it is a small ship
+        if (position == NONE) {
+            surround_destroyed_ship_cell(coordinate); // simply destroy the current point as it is a small ship
+            return true;
+        }
         else {
             // map of other cells which correspond to this ship
             map<Coordinate, GameFieldCell*> destroyed_cells;
