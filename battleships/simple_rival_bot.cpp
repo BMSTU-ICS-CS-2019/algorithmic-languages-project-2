@@ -143,12 +143,16 @@ namespace battleships  {
     Direction SimpleRivalBot::random_available_attack_direction(const Coordinate &coordinate) {
         auto direction = random_direction(random_);
 
-        if (rival_field_->can_be_attacked(coordinate.move(direction, 1))) return direction;
-        if (rival_field_->can_be_attacked(coordinate.move(direction, -1))) return invert_direction(direction);
+        if (rival_field_
+                ->can_be_attacked(coordinate.move(direction, 1))) return direction;
+        if (rival_field_
+                ->can_be_attacked(coordinate.move(direction, -1))) return invert_direction(direction);
 
         direction = rotate_direction_clockwise(direction);
-        if (rival_field_->can_be_attacked(coordinate.move(direction, 1))) return direction;
-        if (rival_field_->can_be_attacked(coordinate.move(direction, -1))) return invert_direction(direction);
+        if (rival_field_
+                ->can_be_attacked(coordinate.move(direction, 1))) return direction;
+        if (rival_field_
+                ->can_be_attacked(coordinate.move(direction, -1))) return invert_direction(direction);
 
         throw runtime_error("No available attack direction for coordinate " + coordinate.to_string());
     }
