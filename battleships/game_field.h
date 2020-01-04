@@ -13,7 +13,7 @@ namespace battleships {
 
     public:
         enum AttackStatus {
-            ALREADY_ATTACKED, MISS, DAMAGE_SHIP, DESTROY_SHIP, WIN
+            EMPTY_ALREADY_ATTACKED, SHIP_ALREADY_ATTACKED, MISS, DAMAGE_SHIP, DESTROY_SHIP, WIN
         };
 
         virtual ~GameField() = default;

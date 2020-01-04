@@ -117,11 +117,10 @@ namespace battleships {
 
     GameField::AttackStatus SimpleGameField::attack(const Coordinate &coordinate) {
         check_bounds(coordinate);
-        cout << "Attack on " << coordinate.to_string() << endl;
 
         const auto cell = get_cell_at(coordinate);
 
-        if (cell->is_discovered()) return ALREADY_ATTACKED;
+        if (cell->is_discovered()) return cell->is_empty() ? EMPTY_ALREADY_ATTACKED : SHIP_ALREADY_ATTACKED;
         cell->discover();
 
         if (cell->is_empty()) return MISS;
@@ -238,7 +237,14 @@ namespace battleships {
 
                 // check can be done right now
                 if (made_no_steps) {
-                    if (last_was_without_steps) throw runtime_error("The game has no free spots");
+                    if (last_was_without_steps) {
+                        coordinate.x = coordinate.y = 0;
+                        for (coordinate.x = 0; coordinate.x < configuration_.field_width; ++coordinate.x) for (
+                                coordinate.y = 0; coordinate.y < configuration_.field_height; ++coordinate.y) if (
+                                        !is_discovered(coordinate)) return;
+
+                        throw runtime_error("The game has no free spots");
+                    }
                     else last_was_without_steps = true;
                 } else last_was_without_steps = false;
             }
