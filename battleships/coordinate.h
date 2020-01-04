@@ -1,19 +1,23 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 #include "direction.h"
+
+using std::string;
 
 namespace battleships  {
 
     struct Coordinate {
-        size_t x, y;
+        /* signed type is used to allow negative number comparisons */
+        int x, y;
 
-        inline Coordinate(const size_t &x, const size_t &y) : x(x), y(y) {}
+        inline Coordinate(const int &x, const int &y) : x(x), y(y) {}
 
-        void move(const Direction &direction, const size_t &delta) {
+        void move(const Direction &direction, const int &delta) {
             switch (direction) {
                 case RIGHT: {
-                    y += delta;
+                    x += delta;
                     break;
                 }
                 case DOWN: {
@@ -32,7 +36,7 @@ namespace battleships  {
             }
         }
 
-        [[nodiscard]] Coordinate move(const Direction &direction, const size_t &delta) const {
+        [[nodiscard]] Coordinate move(const Direction &direction, const int &delta) const {
             switch (direction) {
                 case RIGHT: return Coordinate(x + delta, y);
                 case DOWN: return Coordinate(x, y - delta);
@@ -42,8 +46,21 @@ namespace battleships  {
             }
         }
 
+        void move(const int &deltaX, const int &deltaY) {
+            this->x += deltaX;
+            this->y += deltaX;
+        }
+
+        [[nodiscard]] Coordinate move(const int &deltaX, const int &deltaY) const {
+            return Coordinate(x + deltaX, y + deltaY);
+        }
+
         bool operator==(const Coordinate &other) const {
             return x == other.x && y == other.y;
+        }
+
+        bool operator!=(const Coordinate &other) const {
+            return x != other.x || y != other.y;
         }
 
         bool operator>(const Coordinate &other) const {
@@ -52,6 +69,10 @@ namespace battleships  {
 
         bool operator<(const Coordinate &other) const {
             return x == other.x ? y < other.y : x < other.x;
+        }
+
+        [[nodiscard]] string to_string() const {
+            return char(x + 'A') + std::to_string(y);
         }
     };
 }
