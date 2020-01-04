@@ -19,6 +19,7 @@ using battleships::Coordinate;
 using battleships::Direction;
 using battleships::GameConfiguration;
 using battleships::GameField;
+using battleships::Game;
 using battleships::SimpleGame;
 using battleships::SimpleRivalBot;
 using battleships::RivalBot;
@@ -26,7 +27,6 @@ using battleships::RivalBot;
 Coordinate read_coordinate_safely(const size_t &width, const size_t &height) {
     size_t x, y;
     do {
-        cout << ">>> Enter valid {X,Y} coordinate" << endl;
         char x_char;
         cin >> x_char;
         x = x_char - 'A';
@@ -86,6 +86,7 @@ void read_player_field(GameField *const game_field) {
             } while (!placed_successfully);
         }
     }
+    game_field->print_to_console();
 }
 
 bool play_against_real_rival() {
@@ -156,7 +157,9 @@ bool play_against_bot_rival() {
     rival.place_ships();
 
     class BotAttackCallback : public RivalBot::AttackCallback {
+    battleships::Game *game_;
     public:
+        explicit BotAttackCallback(Game *game) : game_(game) {}
         void on_attack(const Coordinate &coordinate, const GameField::AttackStatus &attack_status) override {
             cout << "> Bot attacks " << coordinate.to_string() << endl;
             switch (attack_status) {
@@ -179,14 +182,17 @@ bool play_against_bot_rival() {
                 case GameField::ALREADY_ATTACKED: throw runtime_error("Bot attacked an already attacked coordinate");
                 default: throw runtime_error("Unknown attack status");
             }
+            game_->print_to_console();
         };
-    } attack_callback;
+    } attack_callback(&game);
+
+    cout << "The game has started!" << endl;
+    game.print_to_console();
 
     bool player_turn = true;
     while (true) {
-        game.print_to_console();
-
         if (player_turn) while (true) {
+            cout << "Enter the coordinate to attack" << endl;
             const auto coordinate = read_coordinate_safely(configuration.field_width, configuration.field_height);
             const auto attack_status = bot_field->attack(coordinate);
             switch (attack_status) {
