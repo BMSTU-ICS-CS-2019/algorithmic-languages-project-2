@@ -12,9 +12,9 @@ namespace battleships  {
         /* signed type is used to allow negative number comparisons */
         int x, y;
 
-        inline Coordinate(const size_t &x, const size_t &y) : x(x), y(y) {}
+        inline Coordinate(const int &x, const int &y) : x(x), y(y) {}
 
-        void move(const Direction &direction, const size_t &delta) {
+        void move(const Direction &direction, const int &delta) {
             switch (direction) {
                 case RIGHT: {
                     x += delta;
@@ -36,7 +36,7 @@ namespace battleships  {
             }
         }
 
-        [[nodiscard]] Coordinate move(const Direction &direction, const size_t &delta) const {
+        [[nodiscard]] Coordinate move(const Direction &direction, const int &delta) const {
             switch (direction) {
                 case RIGHT: return Coordinate(x + delta, y);
                 case DOWN: return Coordinate(x, y - delta);
@@ -46,12 +46,12 @@ namespace battleships  {
             }
         }
 
-        void move(const size_t &deltaX, const size_t &deltaY) {
+        void move(const int &deltaX, const int &deltaY) {
             this->x += deltaX;
             this->y += deltaX;
         }
 
-        [[nodiscard]] Coordinate move(const size_t &deltaX, const size_t &deltaY) const {
+        [[nodiscard]] Coordinate move(const int &deltaX, const int &deltaY) const {
             return Coordinate(x + deltaX, y + deltaY);
         }
 
