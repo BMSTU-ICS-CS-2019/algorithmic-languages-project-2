@@ -221,7 +221,6 @@ bool play_against_bot_rival() {
 
         player_turn = !player_turn;
     }
-    // A0 d J9 u E4 l I3 d C8 r G1 d B6 D6 G8 H6
 }
 
 int main() {
