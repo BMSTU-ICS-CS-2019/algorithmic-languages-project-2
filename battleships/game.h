@@ -2,7 +2,7 @@
 
 #include "game_field.h"
 
-namespace battleships  {
+namespace battleships {
     class Game : public ConsolePrintable {
 
     public:

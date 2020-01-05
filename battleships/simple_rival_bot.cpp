@@ -9,7 +9,7 @@ using std::to_string;
 using common_util::not_contains;
 using common_util::get_random;
 
-namespace battleships  {
+namespace battleships {
 
     void SimpleRivalBot::place_ship_randomly(const size_t &ship_size) {
         auto original_coordinate = random_own_coordinate();
@@ -42,8 +42,8 @@ namespace battleships  {
 
     bool SimpleRivalBot::act(AttackCallback *attack_callback) {
         return attacked_ship_coordinate_.has_value()
-                ? continue_attack(EmptyAttackCallback::or_empty(attack_callback))
-                : random_attack(EmptyAttackCallback::or_empty(attack_callback));
+               ? continue_attack(EmptyAttackCallback::or_empty(attack_callback))
+               : random_attack(EmptyAttackCallback::or_empty(attack_callback));
     }
 
     bool SimpleRivalBot::continue_attack(AttackCallback *const attack_callback) {
@@ -57,7 +57,8 @@ namespace battleships  {
             const auto attack_status = rival_field_->attack(attacked_coordinate);
             attack_callback->on_attack(attacked_coordinate, attack_status);
             switch (attack_status) {
-                case GameField::EMPTY_ALREADY_ATTACKED: case GameField::SHIP_ALREADY_ATTACKED: throw runtime_error(
+                case GameField::EMPTY_ALREADY_ATTACKED:
+                case GameField::SHIP_ALREADY_ATTACKED: throw runtime_error(
                         "Attempt to attack an already attacked point"
                 );
                 case GameField::MISS: return false;
@@ -134,7 +135,8 @@ namespace battleships  {
             const auto attack_status = rival_field_->attack(attacked_coordinate);
             attack_callback->on_attack(attacked_coordinate, attack_status);
             switch (attack_status) {
-                case GameField::EMPTY_ALREADY_ATTACKED: case GameField::SHIP_ALREADY_ATTACKED: throw runtime_error(
+                case GameField::EMPTY_ALREADY_ATTACKED:
+                case GameField::SHIP_ALREADY_ATTACKED: throw runtime_error(
                         "Cell was expected to not be visited"
                 );
                 case GameField::MISS: return false; // just missed

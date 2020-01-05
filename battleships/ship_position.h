@@ -20,7 +20,7 @@ namespace battleships {
         switch (ship_position) {
             case VERTICAL: return HORIZONTAL;
             case HORIZONTAL: return VERTICAL;
-            default: throw invalid_argument(&"Unknown ship position " [ship_position]);
+            default: throw invalid_argument(&"Unknown ship position "[ship_position]);
         }
     }
 

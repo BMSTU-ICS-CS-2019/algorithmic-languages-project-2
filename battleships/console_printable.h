@@ -5,7 +5,7 @@
 using std::cout;
 using std::endl;
 
-namespace battleships  {
+namespace battleships {
     class ConsolePrintable {
 
     public:

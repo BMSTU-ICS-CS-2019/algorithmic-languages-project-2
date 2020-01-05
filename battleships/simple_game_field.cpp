@@ -66,7 +66,7 @@ namespace battleships {
 
         if (cell->is_empty()) throw runtime_error("Attempt to destroy a cell not being a ship");
 
-        const auto ship_cell = (ShipGameFieldCell*) cell;
+        const auto ship_cell = (ShipGameFieldCell *) cell;
 
         const auto position = ship_cell->get_position();
         if (position == NONE) {
@@ -75,7 +75,7 @@ namespace battleships {
         }
 
         // map of other cells which correspond to this ship
-        map<Coordinate, GameFieldCell*> destroyed_cells;
+        map<Coordinate, GameFieldCell *> destroyed_cells;
         {
             size_t ship_cells_left = ship_cell->get_ship_size() - 1;
             auto direction = position == VERTICAL ? UP : RIGHT;
@@ -89,7 +89,7 @@ namespace battleships {
                     const auto tested_cell = get_cell_at(tested_coordinate);
                     if (tested_cell->is_empty()) break; // end of ship reached
                     if (tested_cell->is_discovered()) {
-                        destroyed_cells.insert(pair<Coordinate, GameFieldCell*>(tested_coordinate, tested_cell));
+                        destroyed_cells.insert(pair<Coordinate, GameFieldCell *>(tested_coordinate, tested_cell));
                         if (--ship_cells_left == 0) break; // there is no need to test for any other ship cells
                     } else return false; // the ship is not yet fully destroyed
                 }
@@ -166,9 +166,10 @@ namespace battleships {
         }
 
         // to start from
-        for (size_t i = 0; i < size; ++i) set_cell_at(base_coordinate.move(direction, i), new ShipGameFieldCell(
-                size, is_vertical_direction(direction) ? VERTICAL : HORIZONTAL
-        ));
+        for (size_t i = 0; i < size; ++i)
+            set_cell_at(base_coordinate.move(direction, i), new ShipGameFieldCell(
+                    size, is_vertical_direction(direction) ? VERTICAL : HORIZONTAL
+            ));
         ship_cells_alive_ += size;
 
         return true;
@@ -245,7 +246,8 @@ namespace battleships {
 
                         throw runtime_error("The game has no free spots");
                     }
-                    else last_was_without_steps = true;
+
+                    last_was_without_steps = true;
                 } else last_was_without_steps = false;
             }
         }

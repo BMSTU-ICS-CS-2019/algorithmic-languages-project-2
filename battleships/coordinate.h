@@ -6,7 +6,7 @@
 
 using std::string;
 
-namespace battleships  {
+namespace battleships {
 
     struct Coordinate {
         /* signed type is used to allow negative number comparisons */
@@ -32,7 +32,7 @@ namespace battleships  {
                     y += delta;
                     break;
                 }
-                default: throw invalid_argument(&"Unknown direction" [direction]);
+                default:throw invalid_argument(&"Unknown direction"[direction]);
             }
         }
 
@@ -42,7 +42,7 @@ namespace battleships  {
                 case DOWN: return Coordinate(x, y - delta);
                 case LEFT: return Coordinate(x - delta, y);
                 case UP: return Coordinate(x, y + delta);
-                default: throw invalid_argument(&"Unknown direction" [direction]);
+                default:throw invalid_argument(&"Unknown direction"[direction]);
             }
         }
 

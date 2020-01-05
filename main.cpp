@@ -110,7 +110,8 @@ bool play_against_real_rival() {
             const auto coordinate = read_coordinate_safely(configuration.field_width, configuration.field_height);
             const auto attack_status = (first_player_turn ? game.field_2() : game.field_1())->attack(coordinate);
             switch (attack_status) {
-                case GameField::EMPTY_ALREADY_ATTACKED: case GameField::SHIP_ALREADY_ATTACKED: {
+                case GameField::EMPTY_ALREADY_ATTACKED:
+                case GameField::SHIP_ALREADY_ATTACKED: {
                     cout << "> This point has already been attacked" << endl;
                     continue;
                 }
@@ -134,7 +135,8 @@ bool play_against_real_rival() {
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has won this game!" << endl;
                     return first_player_turn;
                 }
-                default: throw invalid_argument("Unknown player-attack status");
+                default:
+                    throw invalid_argument("Unknown player-attack status");
             }
             break;
         }
@@ -156,9 +158,10 @@ bool play_against_bot_rival() {
     rival.place_ships();
 
     class BotAttackCallback : public RivalBot::AttackCallback {
-    battleships::Game *game_;
+        battleships::Game *game_;
     public:
         explicit BotAttackCallback(Game *game) : game_(game) {}
+
         void on_attack(const Coordinate &coordinate, const GameField::AttackStatus &attack_status) override {
             cout << "> Bot attacks " << coordinate.to_string() << endl;
             switch (attack_status) {
@@ -174,14 +177,17 @@ bool play_against_bot_rival() {
                     cout << "> Bot has destroyed your ship!" << endl;
                     break;
                 }
-                case GameField::WIN:{
+                case GameField::WIN: {
                     cout << "> Bot has won this game!" << endl;
                     break;
                 }
-                case GameField::EMPTY_ALREADY_ATTACKED: case GameField::SHIP_ALREADY_ATTACKED: throw runtime_error(
-                        "Bot attacked an already attacked coordinate"
-                );
-                default: throw runtime_error("Unknown attack status");
+                case GameField::EMPTY_ALREADY_ATTACKED:
+                case GameField::SHIP_ALREADY_ATTACKED:
+                    throw runtime_error(
+                            "Bot attacked an already attacked coordinate"
+                    );
+                default:
+                    throw runtime_error("Unknown attack status");
             }
             game_->print_to_console();
         };
@@ -192,39 +198,43 @@ bool play_against_bot_rival() {
 
     bool player_turn = true;
     while (true) {
-        if (player_turn) while (true) {
-            cout << "Enter the coordinate to attack" << endl;
-            const auto coordinate = read_coordinate_safely(configuration.field_width, configuration.field_height);
-            const auto attack_status = bot_field->attack(coordinate);
-            switch (attack_status) {
-                case GameField::EMPTY_ALREADY_ATTACKED: case GameField::SHIP_ALREADY_ATTACKED: {
-                    cout << "> This point has already been attacked" << endl;
-                    continue;
+        if (player_turn)
+            while (true) {
+                cout << "Enter the coordinate to attack" << endl;
+                const auto coordinate = read_coordinate_safely(configuration.field_width, configuration.field_height);
+                const auto attack_status = bot_field->attack(coordinate);
+                switch (attack_status) {
+                    case GameField::EMPTY_ALREADY_ATTACKED:
+                    case GameField::SHIP_ALREADY_ATTACKED: {
+                        cout << "> This point has already been attacked" << endl;
+                        continue;
+                    }
+                    case GameField::MISS: {
+                        game.print_to_console();
+                        cout << "> You've missed" << endl;
+                        break;
+                    }
+                    case GameField::DAMAGE_SHIP: {
+                        game.print_to_console();
+                        cout << "> You've hit a ship!" << endl;
+                        continue;
+                    }
+                    case GameField::DESTROY_SHIP: {
+                        game.print_to_console();
+                        cout << "> You've destroyed a ship!" << endl;
+                        continue;
+                    }
+                    case GameField::WIN: {
+                        game.print_to_console();
+                        cout << "> You have won this game!" << endl;
+                        return true;
+                    }
+                    default:
+                        throw invalid_argument("Unknown player-attack status");
                 }
-                case GameField::MISS: {
-                    game.print_to_console();
-                    cout << "> You've missed" << endl;
-                    break;
-                }
-                case GameField::DAMAGE_SHIP: {
-                    game.print_to_console();
-                    cout << "> You've hit a ship!" << endl;
-                    continue;
-                }
-                case GameField::DESTROY_SHIP: {
-                    game.print_to_console();
-                    cout << "> You've destroyed a ship!" << endl;
-                    continue;
-                }
-                case GameField::WIN: {
-                    game.print_to_console();
-                    cout << "> You have won this game!" << endl;
-                    return true;
-                }
-                default: throw invalid_argument("Unknown player-attack status");
+                break;
             }
-            break;
-        } else if (rival.act(&attack_callback)) return false;
+        else if (rival.act(&attack_callback)) return false;
 
         player_turn = !player_turn;
     }

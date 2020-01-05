@@ -30,7 +30,7 @@ namespace battleships {
             case DOWN: return UP;
             case LEFT: return RIGHT;
             case UP: return DOWN;
-            default: throw invalid_argument(&"Unknown direction " [direction]);
+            default:throw invalid_argument(&"Unknown direction "[direction]);
         }
     }
 
@@ -38,7 +38,7 @@ namespace battleships {
         switch (direction) {
             case RIGHT: case LEFT: return true;
             case UP: case DOWN: return false;
-            default: throw invalid_argument(&"Unknown direction " [direction]);
+            default:throw invalid_argument(&"Unknown direction "[direction]);
         }
     }
 
@@ -46,7 +46,7 @@ namespace battleships {
         switch (direction) {
             case RIGHT: case LEFT: return false;
             case UP: case DOWN: return true;
-            default: throw invalid_argument(&"Unknown direction " [direction]);
+            default:throw invalid_argument(&"Unknown direction "[direction]);
         }
     }
 
@@ -56,7 +56,7 @@ namespace battleships {
             case DOWN: return LEFT;
             case LEFT: return UP;
             case UP: return RIGHT;
-            default: throw invalid_argument(&"Unknown direction " [direction]);
+            default:throw invalid_argument(&"Unknown direction "[direction]);
         }
     }
 
@@ -66,7 +66,7 @@ namespace battleships {
             case DOWN: return RIGHT;
             case LEFT: return DOWN;
             case UP: return LEFT;
-            default: throw invalid_argument(&"Unknown direction " [direction]);
+            default:throw invalid_argument(&"Unknown direction "[direction]);
         }
     }
 
@@ -76,7 +76,7 @@ namespace battleships {
             case 1: return DOWN;
             case 2: return LEFT;
             case 3: return UP;
-            default: throw runtime_error("Generated random value is out of range");
+            default:throw runtime_error("Generated random value is out of range");
         }
     }
 
@@ -84,7 +84,7 @@ namespace battleships {
         switch (horizontal_direction_int_distribution(random)) {
             case 0: return RIGHT;
             case 1: return LEFT;
-            default: throw runtime_error("Generated random value is out of range");
+            default:throw runtime_error("Generated random value is out of range");
         }
     }
 
@@ -92,7 +92,7 @@ namespace battleships {
         switch (vertical_direction_int_distribution(random)) {
             case 0: return DOWN;
             case 1: return UP;
-            default: throw runtime_error("Generated random value is out of range");
+            default:throw runtime_error("Generated random value is out of range");
         }
     }
 
@@ -102,7 +102,7 @@ namespace battleships {
             case DOWN: return "down";
             case LEFT: return "left";
             case UP: return "up";
-            default: throw invalid_argument(&"Unknown direction " [direction]);
+            default:throw invalid_argument(&"Unknown direction "[direction]);
         }
     }
 }
