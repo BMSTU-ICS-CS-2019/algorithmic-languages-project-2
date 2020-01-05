@@ -1,7 +1,6 @@
 #include "battleships/simple_game_field.h"
 
 #include <string>
-#include <termcap.h>
 
 #include "util/cli_util.h"
 #include "battleships/coordinate.h"
