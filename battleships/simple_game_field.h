@@ -46,8 +46,7 @@ namespace battleships {
 
         /**
          * @brief Attempts to destroy the ship by attacking the given point.
-         * @param x X-coordinate of the point attacked
-         * @param y Y-coordinate of the point attacked
+         * @param coordinate coordinate of the point attacked
          * @return {@code true} if the ship was fully destroyed by the attack and {@code false} otherwise
          */
         inline bool attempt_destroy_ship(const Coordinate &coordinate);

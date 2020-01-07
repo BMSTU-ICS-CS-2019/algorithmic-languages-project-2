@@ -22,4 +22,4 @@ add_executable(algorithmic_languages_project_2
         battleships/container_util.h
         battleships/simple_game.h
         battleships/game_field_cell.h
-)
+        )

@@ -134,7 +134,8 @@ bool play_against_real_rival() {
                     cout << "> Player " << (first_player_turn ? "1" : "2") << " has won this game!" << endl;
                     return first_player_turn;
                 }
-                default: throw invalid_argument("Unknown player-attack status");
+                default:
+                    throw invalid_argument("Unknown player-attack status");
             }
             break;
         }
@@ -156,9 +157,10 @@ bool play_against_bot_rival() {
     rival.place_ships();
 
     class BotAttackCallback : public RivalBot::AttackCallback {
-    battleships::Game *game_;
+        Game *game_;
     public:
         explicit BotAttackCallback(Game *game) : game_(game) {}
+
         void on_attack(const Coordinate &coordinate, const GameField::AttackStatus &attack_status) override {
             cout << "> Bot attacks " << coordinate.to_string() << endl;
             switch (attack_status) {
@@ -174,14 +176,17 @@ bool play_against_bot_rival() {
                     cout << "> Bot has destroyed your ship!" << endl;
                     break;
                 }
-                case GameField::WIN:{
+                case GameField::WIN: {
                     cout << "> Bot has won this game!" << endl;
                     break;
                 }
-                case GameField::EMPTY_ALREADY_ATTACKED: case GameField::SHIP_ALREADY_ATTACKED: throw runtime_error(
-                        "Bot attacked an already attacked coordinate"
-                );
-                default: throw runtime_error("Unknown attack status");
+                case GameField::EMPTY_ALREADY_ATTACKED:
+                case GameField::SHIP_ALREADY_ATTACKED:
+                    throw runtime_error(
+                            "Bot attacked an already attacked coordinate"
+                    );
+                default:
+                    throw runtime_error("Unknown attack status");
             }
             game_->print_to_console();
         };
@@ -197,7 +202,8 @@ bool play_against_bot_rival() {
             const auto coordinate = read_coordinate_safely(configuration.field_width, configuration.field_height);
             const auto attack_status = bot_field->attack(coordinate);
             switch (attack_status) {
-                case GameField::EMPTY_ALREADY_ATTACKED: case GameField::SHIP_ALREADY_ATTACKED: {
+                case GameField::EMPTY_ALREADY_ATTACKED:
+                case GameField::SHIP_ALREADY_ATTACKED: {
                     cout << "> This point has already been attacked" << endl;
                     continue;
                 }
